@@ -7,6 +7,8 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Response;
 
 class ApiLoginController extends Controller
 {
@@ -39,6 +41,23 @@ class ApiLoginController extends Controller
             'divisions.division_name'
             )->where('divisions.division_code', 'ADV4256')->orderBy('user_details.nama_depan', 'ASC')->first();
         return response()->json(['status' => 'success', 'data' => $user, 'message' => 'User login successfully.'], 200);
+    }
+
+    public function userImage($filename)
+    {
+        $path = storage_path('app/public/user/'.$filename);
+
+        if (!file_exists($path)) {
+            abort(404);
+        }
+
+        $file = File::get($path);
+        $type = File::mimeType($path);
+
+        $response = Response::make($file, 200);
+        $response->header("Content-Type", $type);
+
+        return $response;
     }
 
     public function logout()
