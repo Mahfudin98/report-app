@@ -48,16 +48,10 @@ class ApiLoginController extends Controller
         $path = storage_path('app/public/user/'.$filename);
 
         if (!file_exists($path)) {
-            abort(404);
+            return response()->json(['status' => 'success', 'message' => 'Data tidak ditemukan.'], 404);
         }
 
-        $file = File::get($path);
-        $type = File::mimeType($path);
-
-        $response = Response::make($file, 200);
-        $response->header("Content-Type", $type);
-
-        return $response;
+        return response()->json(['status' => 'success', 'data' => $path, 'message' => 'User login successfully.'], 200);
     }
 
     public function logout()
