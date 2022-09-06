@@ -34,7 +34,7 @@ class ApiLoginController extends Controller
         $user = $request->user()->join('user_details', 'users.id', '=', 'user_details.user_id')->join('divisions', 'users.division_id', '=', 'divisions.id')
         ->select(
             'users.email', 'users.username',
-            'user_details.nama_depan', 'user_details.nama_belakang', 'user_detail.image',
+            'user_details.nama_depan', 'user_details.nama_belakang', 'user_details.image',
             'divisions.division_code',
             'divisions.division_name'
             )->where('divisions.division_code', 'ADV4256')->orderBy('user_details.nama_depan', 'ASC')->first();
