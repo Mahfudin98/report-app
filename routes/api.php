@@ -19,7 +19,7 @@ Route::controller(ApiLoginController::class)->group(function(){
     Route::post('login', 'login');
     Route::middleware(['auth:sanctum', 'ability:check-status'])->group(function(){
         Route::get('/user-login', 'userLogin');
-        Route::get('/user-image/{filename}', 'userImage');
+        Route::get('/user-image/image="{filename}"', 'userImage');
         Route::post('/logout', 'logout');
     });
 });
