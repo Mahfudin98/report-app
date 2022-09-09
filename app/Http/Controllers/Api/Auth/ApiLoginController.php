@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\Storage;
 
 class ApiLoginController extends Controller
 {
@@ -24,11 +25,8 @@ class ApiLoginController extends Controller
         if (!$user || !Hash::check($request->password, $user->password)) {
             return response()->json(['status' => 'failed', 'message' => 'User login failed.'], 401);
         }
-
-        $success['token']    =  $user->createToken(time())->plainTextToken;
-        $success['username'] =  $user->username;
-
-        return response()->json(['status' => 'success', 'data' => $success, 'message' => 'User login successfully.'], 200);
+        $token    =  $user->createToken(time())->plainTextToken;
+        return response()->json(['status' => 'success', 'data' => $token, 'message' => 'User login successfully.'], 200);
     }
 
     public function userLogin(Request $request)
@@ -43,19 +41,26 @@ class ApiLoginController extends Controller
         return response()->json(['status' => 'success', 'data' => $user, 'message' => 'User login successfully.'], 200);
     }
 
-    public function userImage($filename)
+    public function userImage(Request $request)
     {
-        $path = storage_path('app/public/user/'.$filename);
+        $user = $request->user()->join('user_details', 'users.id', '=', 'user_details.user_id')->join('divisions', 'users.division_id', '=', 'divisions.id')
+        ->select(
+            'users.email', 'users.username',
+            'user_details.nama_depan', 'user_details.nama_belakang', 'user_details.image',
+            'divisions.division_code',
+            'divisions.division_name'
+            )->where('divisions.division_code', 'ADV4256')->orderBy('user_details.nama_depan', 'ASC')->first();
+        $path = Storage::disk('public')->url('user/'.$user->image);
 
-        if (!file_exists($path)) {
-            return response()->json(['status' => 'success', 'message' => 'Data tidak ditemukan.'], 404);
+        if ($user->image == null) {
+            return response()->json(['status' => 'failed', 'message' => 'User login failed.'], 404);
         }
 
-        return response()->json(['status' => 'success', 'data' => $path, 'message' => 'User login successfully.'], 200);
+        return response()->json(['status' => 'success', 'data' => $path, 'message' => 'Image Load success.'], 200);
     }
 
-    public function logout()
+    public function logout(Request $request)
     {
-        // auth()->user()->currentAccessToken()->delete();
+        $request->user()->currentAccessToken()->delete();
     }
 }
