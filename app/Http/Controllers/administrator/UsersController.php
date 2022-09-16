@@ -26,7 +26,11 @@ class UsersController extends Controller
             'user_details.*',
             'divisions.division_code',
             'divisions.division_name'
-            )->where('users.user_type', '!=', true)->orderBy('user_details.nama_depan', 'ASC')->get();
+            )->where('users.user_type', '!=', true)->orderBy('user_details.nama_depan', 'ASC');
+        if (request()->q != null) {
+            $user = $user->where('nama_depan', 'LIKE', '%' . request()->q . '%');
+        }
+        $user = $user->paginate(15);
         return view('user.userIndex', compact('user'));
     }
 

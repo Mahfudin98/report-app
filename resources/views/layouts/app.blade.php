@@ -60,6 +60,67 @@
             });
         });
     </script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.0/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $(".provinsi, .kota, .kecamatan")
+
+            jQuery.ajax({
+                url: '/api/provinsi',
+                type: "GET",
+                dataType: "json",
+                success: function(response) {
+                    $.each(response.data, function(key, value) {
+                        $('select[name="provinsi_id"]').append('<option value="' + value.province_id + '">' +
+                            value.province + '</option>');
+                    });
+                }
+            })
+
+            $('select[name="provinsi_id"]').on('change', function() {
+                let provinceId = $(this).val();
+                if (provinceId) {
+                    jQuery.ajax({
+                        url: '/api/kota/' + provinceId,
+                        type: "GET",
+                        dataType: "json",
+                        success: function(response) {
+                            $('select[name="kota_id"]').empty();
+                            $('select[name="kota_id"]').append(
+                                '<option value="">Pilih Kota</option>');
+                            $.each(response.data, function(key, value) {
+                                $('select[name="kota_id"]').append('<option value="' +
+                                    value.city_id + '">' + value.city_name + '</option>');
+                            });
+                        },
+                    });
+                }
+            });
+
+            $('select[name="kota_id"]').on('change', function() {
+                let kotaId = $(this).val();
+                if (kotaId) {
+                    jQuery.ajax({
+                        url: '/api/kecamatan/' + kotaId,
+                        type: "GET",
+                        dataType: "json",
+                        success: function(response) {
+                            $('select[name="district_id"]').empty();
+                            $('select[name="district_id"]').append(
+                                '<option value="">Pilih Kecamatan</option>');
+                            $.each(response.data, function(key, value) {
+                                $('select[name="district_id"]').append('<option value="' +
+                                    value.subdistrict_id + '">' + value.subdistrict_name + '</option>');
+                            });
+                        },
+                    });
+                }
+            });
+        })
+    </script>
 </body>
 
 </html>
