@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\Api\Administrator\ApiDivisionsController;
+use App\Http\Controllers\Api\Administrator\ApiMembersController;
+use App\Http\Controllers\Api\Administrator\ApiProductsController;
 use App\Http\Controllers\Api\Auth\ApiLoginController;
 use App\Http\Controllers\Api\Auth\ApiUsersController;
 use App\Http\Controllers\Api\Transaction\ApiTransactionController;
@@ -51,6 +53,23 @@ Route::controller(ApiDivisionsController::class)->group(function(){
 
 Route::controller(ApiTransactionController::class)->group(function(){
     Route::middleware(['auth:sanctum'])->group(function(){
+        Route::get('/transaction-index', 'index');
+        Route::get('/transaction-show/{code}', 'show');
         Route::post('/transaction-store', 'transactionStore');
+    });
+});
+
+Route::controller(ApiProductsController::class)->group(function(){
+    Route::middleware(['auth:sanctum'])->group(function(){
+        Route::get('/product-index', 'index');
+        Route::get('/product-select', 'selectProduct');
+    });
+});
+
+Route::controller(ApiMembersController::class)->group(function(){
+    Route::middleware(['auth:sanctum'])->group(function(){
+        Route::get('/member-index-cs', 'indexCS');
+        Route::get('/member-image', 'memberImage');
+        Route::get('/member-select', 'selectMember');
     });
 });

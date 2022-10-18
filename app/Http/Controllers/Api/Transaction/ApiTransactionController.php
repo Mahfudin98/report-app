@@ -4,14 +4,129 @@ namespace App\Http\Controllers\Api\Transaction;
 
 use App\Http\Controllers\Controller;
 use App\Models\Customer;
+use App\Models\Member;
 use App\Models\Transaction;
 use App\Models\TransactionProduct;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Carbon\Carbon;
+
+use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class ApiTransactionController extends Controller
 {
+    public function index()
+    {
+        $user = request()->user();
+        $start = Carbon::now()->startOfMonth()->format('Y-m-d');
+        $end = Carbon::now()->endOfMonth()->format('Y-m-d');
+
+        if (request()->date != '') {
+            $date = explode(' - ', request()->date);
+            $start = Carbon::parse($date[0])->format('Y-m-d');
+            $end = Carbon::parse($date[1])->format('Y-m-d');
+        }
+        $tr = DB::table('transactions')
+            ->leftJoin('members', 'transactions.member_id', '=', 'members.id')
+            ->leftJoin('customers', 'transactions.id', '=', 'customers.transaction_id')
+            ->select(
+                'transactions.*',
+                'members.member_name',
+                'members.member_alamat',
+                'members.member_type',
+                'customers.customer_name',
+                'customers.customer_alamat',
+            )
+            ->where('transactions.user_id', $user->id)
+            ->whereBetween('transactions.tanggal_transaksi', [$start, $end])
+            ->orderBy('transactions.tanggal_transaksi', 'Desc')
+            ->get();
+        $data = [];
+        foreach ($tr as $row) {
+            $prod = TransactionProduct::where('transaction_id', $row->id)->get();
+            $data[] = [
+                'member' => $row->member_id == null ? 'customer' : 'member',
+                'nama' => $row->member_id == null ? $row->customer_name : $row->member_name,
+                'alamat' => $row->member_id == null ? $row->customer_alamat : $row->member_alamat,
+                'nomor_pesanan' => $row->nomor_pesanan,
+                'tanggal' => $row->tanggal_transaksi,
+                'expedisi' => $row->expedisi,
+                'ongkir' => $row->ongkir,
+                'origin_customer' => $row->origin_customer == 0 ? 'Iklan ADV' : ($row->origin_customer == 1 ? 'Marketplace' : 'Reorder'),
+                'type_transaction' => $row->type_transaction == 1 ? 'Transfer' : 'COD',
+                'type_customer' => $row->member_id != null ? ($row->member_type == 1 ? 'Agen' : 'Reseller') : 'Customer',
+                'produk' => $prod,
+                'total_harga' => $prod->sum('jumlah_harga')
+            ];
+        }
+        return response()->json($this->paginate($data), 200);
+    }
+
+    public function paginate($items, $perPage = 50, $page = null, $options = [])
+    {
+        $page = $page ?: (Paginator::resolveCurrentPage() ?: 1);
+        $items = $items instanceof Collection ? $items : Collection::make($items);
+        return new LengthAwarePaginator($items->forPage($page, $perPage), $items->count(), $perPage, $page, $options);
+    }
+
+    public function show($code)
+    {
+        $user = request()->user();
+        $tr = DB::table('transactions')
+            ->leftJoin('members', 'transactions.member_id', '=', 'members.id')
+            ->leftJoin('customers', 'transactions.id', '=', 'customers.transaction_id')
+            ->select(
+                'transactions.*',
+                'members.member_name',
+                'members.member_alamat',
+                'members.member_type',
+                'members.member_phone',
+                'customers.customer_name',
+                'customers.customer_alamat',
+                'customers.customer_phone',
+            )
+            ->where('transactions.user_id', $user->id)
+            ->where('transactions.nomor_pesanan', $code)
+            ->first();
+        $prod = TransactionProduct::where('transaction_id', $tr->id)->get();
+        $detail = DB::table('users')->join('user_details', 'users.id', '=', 'user_details.user_id')->join('divisions', 'users.division_id', '=', 'divisions.id')
+            ->select(
+                'users.email',
+                'users.username',
+                'user_details.nama_depan',
+                'user_details.nama_belakang',
+                'user_details.image',
+                'user_details.alamat',
+                'user_details.tanggal_lahir',
+                'user_details.phone',
+                'divisions.division_code',
+                'divisions.division_name'
+            )->where('users.id', $user->id)->first();
+        $data = [
+            // data cs
+            'nama_cs' => $detail->nama_depan . " " . $detail->nama_belakang,
+            'email_cs' => $detail->email,
+            'phone_cs' => $detail->phone,
+            'member' => $tr->member_id == null ? 'customer' : 'member',
+            'nama' => $tr->member_id == null ? $tr->customer_name : $tr->member_name,
+            'alamat' => $tr->member_id == null ? $tr->customer_alamat : $tr->member_alamat,
+            'phone' => $tr->member_id == null ? $tr->customer_phone : $tr->member_phone,
+            'nomor_pesanan' => $tr->nomor_pesanan,
+            'tanggal' => $tr->tanggal_transaksi,
+            'expedisi' => $tr->expedisi,
+            'ongkir' => $tr->ongkir,
+            'origin_customer' => $tr->origin_customer == 0 ? 'Iklan ADV' : ($tr->origin_customer == 1 ? 'Marketplace' : 'Reorder'),
+            'type_transaction' => $tr->type_transaction == 1 ? 'Transfer' : 'COD',
+            'type_customer' => $tr->member_id != null ? ($tr->member_type == 1 ? 'Agen' : 'Reseller') : 'Customer',
+            'produk' => $prod,
+            'total_harga' => $prod->sum('jumlah_harga')
+        ];
+        return response()->json(['status' => 'success', 'data' => $data, 'message' => 'Data load successfully.'], 200);
+    }
+
     public function transactionStore(Request $request)
     {
         $this->validate($request, [
