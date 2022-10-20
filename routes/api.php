@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\Administrator\ApiMembersController;
 use App\Http\Controllers\Api\Administrator\ApiProductsController;
 use App\Http\Controllers\Api\Auth\ApiLoginController;
 use App\Http\Controllers\Api\Auth\ApiUsersController;
+use App\Http\Controllers\Api\Dashboard\ProfileDashboardController;
 use App\Http\Controllers\Api\Transaction\ApiTransactionController;
 use App\Http\Controllers\Api\Transaction\RajaOngkirController;
 use Illuminate\Http\Request;
@@ -39,6 +40,7 @@ Route::controller(ApiLoginController::class)->group(function(){
 Route::controller(ApiUsersController::class)->group(function(){
     Route::middleware(['auth:sanctum'])->group(function(){
         Route::get('/user-list', 'index');
+        Route::get('/user-show/{username}', 'show');
         Route::get('/user-edit', 'edit');
         Route::get('/user-adv', 'getAdv');
         Route::post('/profile-update', 'profileUpdate');
@@ -56,12 +58,14 @@ Route::controller(ApiTransactionController::class)->group(function(){
         Route::get('/transaction-index', 'index');
         Route::get('/transaction-show/{code}', 'show');
         Route::post('/transaction-store', 'transactionStore');
+        Route::delete('/transaction-delete/{code}', 'delete');
     });
 });
 
 Route::controller(ApiProductsController::class)->group(function(){
     Route::middleware(['auth:sanctum'])->group(function(){
         Route::get('/product-index', 'index');
+        Route::get('/product-category', 'category');
         Route::get('/product-select', 'selectProduct');
     });
 });
@@ -69,7 +73,12 @@ Route::controller(ApiProductsController::class)->group(function(){
 Route::controller(ApiMembersController::class)->group(function(){
     Route::middleware(['auth:sanctum'])->group(function(){
         Route::get('/member-index-cs', 'indexCS');
-        Route::get('/member-image', 'memberImage');
         Route::get('/member-select', 'selectMember');
+    });
+});
+
+Route::controller(ProfileDashboardController::class)->group(function(){
+    Route::middleware(['auth:sanctum'])->group(function(){
+        Route::get('/profile-bar/{username}', 'barChart');
     });
 });

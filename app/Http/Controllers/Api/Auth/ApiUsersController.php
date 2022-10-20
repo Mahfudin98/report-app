@@ -7,6 +7,7 @@ use App\Http\Requests\Api\Auth\StoreUsersRequest;
 use Illuminate\Http\Request;
 use App\Helpers\UserActivity as UserActivityHelper;
 use App\Http\Requests\Api\Auth\UpdateUsersRequest;
+use App\Http\Resources\UsersCollection;
 use App\Models\Division;
 use App\Models\User;
 use App\Models\UserDetail;
@@ -33,17 +34,48 @@ class ApiUsersController extends Controller
         if (request()->q != null) {
             $users = $users->where('nama_depan', 'LIKE', '%' . request()->q . '%');
         }
-        $users = $users->paginate(15);
+        $users = $users->get();
         $data = [];
         foreach ($users as $row) {
             $data[] = [
-                'nama_depan' => $row->nama_depan,
-                'nama_belakang' => $row->nama_belakang,
+                'username' => $row->username,
+                'nama' => $row->nama_depan . " " . $row->nama_belakang,
+                'email' => $row->email,
+                'phone' => $row->phone,
                 'image' => Storage::disk('public')->url('user/'.$row->image),
                 'division' => $row->division_name,
             ];
         }
-        return response()->json(['status' => 'success', 'data' => $data, 'message' => 'User login successfully.'], 200);
+        return new UsersCollection($data);
+    }
+
+    public function show($username)
+    {
+        $user = DB::table('users')->join('user_details', 'users.id', '=', 'user_details.user_id')->join('divisions', 'users.division_id', '=', 'divisions.id')
+        ->select(
+            'users.*',
+            'user_details.*',
+            'divisions.division_code',
+            'divisions.division_name'
+            )->where('users.username', $username)->first();
+        $data = "";
+        if ($user->parent_id != null) {
+            $adv = UserDetail::where('user_id', $user->parent_id)->first();
+        }
+        $data = [
+            'adv' => $user->parent_id != null ? $adv->nama_depan . " " . $adv->nama_belakang : null,
+            'username' => $user->username,
+            'nama' => $user->nama_depan . " " . $user->nama_belakang,
+            'alamat' => $user->alamat,
+            'phone' => $user->phone,
+            'email' => $user->email,
+            'tanggal_lahir' => $user->tanggal_lahir,
+            'tanggal_masuk' => $user->tanggal_masuk,
+            'image' => Storage::disk('public')->url('user/'.$user->image),
+            'gender' => $user->jenis_kelamin,
+            'division' => $user->division_name,
+        ];
+        return response()->json(['status' => 'success', 'data' => $data], 200);
     }
 
     public function create()

@@ -169,6 +169,8 @@ class ApiTransactionController extends Controller
             $file = $request->file('image');
             $filename = time() . Str::slug($code) . '.' . $file->getClientOriginalExtension();
             $file->storeAs('public/transaction', $filename);
+        } else {
+            $filename = null;
         }
 
         DB::beginTransaction();
@@ -219,5 +221,15 @@ class ApiTransactionController extends Controller
             DB::rollback();
             return response()->json(['error' => $e->getMessage()]);
         }
+    }
+
+    public function delete($code)
+    {
+        $user = request()->user();
+        $tr = Transaction::where('nomor_pesanan', $code)->where('user_id', $user->id)->first();
+        $pr = TransactionProduct::where('transaction_id', $tr->id)->delete();
+
+        $tr->delete();
+        return response()->json(['status' => 'success']);
     }
 }

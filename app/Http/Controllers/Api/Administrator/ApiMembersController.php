@@ -5,10 +5,7 @@ namespace App\Http\Controllers\Api\Administrator;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\MembersCollection;
 use App\Models\Member;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Response;
 
 class ApiMembersController extends Controller
 {
