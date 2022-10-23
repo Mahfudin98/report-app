@@ -11,7 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
-
+use App\Helpers\UserActivity as UserActivityHelper;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -216,6 +216,7 @@ class ApiTransactionController extends Controller
                 ]);
             }
             DB::commit();
+            UserActivityHelper::addToLog($request->type_customer != 2 ? 'Add Transaction Member' : 'Add Transaction Customer');
             return response()->json(['status' => 'success'], 200);
         } catch (\Exception $e) {
             DB::rollback();
@@ -227,8 +228,8 @@ class ApiTransactionController extends Controller
     {
         $user = request()->user();
         $tr = Transaction::where('nomor_pesanan', $code)->where('user_id', $user->id)->first();
+        UserActivityHelper::addToLog($tr->type_customer != 2 ? 'Remove Transaction Member' : 'Remove Transaction Customer');
         $pr = TransactionProduct::where('transaction_id', $tr->id)->delete();
-
         $tr->delete();
         return response()->json(['status' => 'success']);
     }

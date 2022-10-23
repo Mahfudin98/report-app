@@ -19,7 +19,7 @@ class DivisionsTableSeeder extends Seeder
         $data = [
             [
                 'division_code' => 'ADV4256',
-                'division_name' => 'Advertaiser',
+                'division_name' => 'Advertiser',
                 'created_at' => Carbon::now()->format('Y-m-d H:i:s')
             ],
 

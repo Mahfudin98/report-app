@@ -5,6 +5,8 @@ use App\Http\Controllers\Api\Administrator\ApiMembersController;
 use App\Http\Controllers\Api\Administrator\ApiProductsController;
 use App\Http\Controllers\Api\Auth\ApiLoginController;
 use App\Http\Controllers\Api\Auth\ApiUsersController;
+use App\Http\Controllers\Api\Dashboard\ActivityUserController;
+use App\Http\Controllers\Api\Dashboard\DashboardIndex;
 use App\Http\Controllers\Api\Dashboard\ProfileDashboardController;
 use App\Http\Controllers\Api\Transaction\ApiTransactionController;
 use App\Http\Controllers\Api\Transaction\RajaOngkirController;
@@ -80,5 +82,18 @@ Route::controller(ApiMembersController::class)->group(function(){
 Route::controller(ProfileDashboardController::class)->group(function(){
     Route::middleware(['auth:sanctum'])->group(function(){
         Route::get('/profile-bar/{username}', 'barChart');
+    });
+});
+
+Route::controller(ActivityUserController::class)->group(function(){
+    Route::middleware(['auth:sanctum'])->group(function(){
+        Route::get('/user-activity/{username}', 'userActivity');
+    });
+});
+
+Route::controller(DashboardIndex::class)->group(function(){
+    Route::middleware(['auth:sanctum'])->group(function(){
+        Route::get('/line-chart-dashboard', 'lineChart');
+        Route::get('/top-cs', 'topCS');
     });
 });
