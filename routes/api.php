@@ -95,5 +95,6 @@ Route::controller(DashboardIndex::class)->group(function(){
     Route::middleware(['auth:sanctum'])->group(function(){
         Route::get('/line-chart-dashboard', 'lineChart');
         Route::get('/top-cs', 'topCS');
+        Route::get('/top-product', 'topProduk');
     });
 });

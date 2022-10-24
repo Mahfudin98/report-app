@@ -95,4 +95,23 @@ class DashboardIndex extends Controller
         }
         return response()->json($this->paginate($data), 200);
     }
+
+    public function topProduk()
+    {
+        $pr = DB::table('transaction_products')
+            ->join('products', 'transaction_products.product_id', '=', 'products.id')
+            ->select('transaction_products.*', 'products.*')
+            ->groupBy('transaction_products.product_id')
+            ->selectRaw('transaction_products.qty, sum(qty) as total')
+            ->orderBy('total', 'DESC')
+            ->get();
+        $data = [];
+        foreach ($pr as $row) {
+            $data[] = [
+                'produk' => $row->product_name,
+                'qty' => $row->total
+            ];
+        }
+        return response()->json($this->paginate($data), 200);
+    }
 }
