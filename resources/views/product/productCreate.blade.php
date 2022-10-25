@@ -46,6 +46,11 @@
                                         800x400px).</p>
                                 </div>
                                 <div class="mb-3">
+                                    <label for="product_weight" class="form-label">Berat Produk (Gram) <span class="text-danger">*</span></label>
+                                    <input type="number" name="product_weight" class="form-control rounded-lg"
+                                        placeholder="Berat Produk" aria-label="product_weight" aria-describedby="basic-addon1" required>
+                                </div>
+                                <div class="mb-3">
                                     <label for="product_stock" class="form-label">Stok Produk <span class="text-danger">*</span></label>
                                     <input type="number" name="product_stock" class="form-control rounded-lg"
                                         placeholder="Stok Produk" aria-label="product_stock" aria-describedby="basic-addon1" required>

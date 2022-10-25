@@ -59,7 +59,8 @@ class ProductController extends Controller
             'product_name'  => $request->product_name,
             'product_bpom'  => $request->product_bpom,
             'image' => $filename != '' ? $filename : null,
-            'product_stock' => $request->product_stock
+            'product_stock' => $request->product_stock,
+            'product_weight' => $request->product_weight,
         ]);
 
         ProductPrice::create([
@@ -104,6 +105,7 @@ class ProductController extends Controller
             'product_bpom'   => $request->product_bpom,
             'image'          => $filename,
             'product_stock'  => $request->product_stock,
+            'product_weight' => $request->product_weight,
             'product_status' => $request->product_status
         ]);
         $harga = ProductPrice::where('product_id', $product->id)->first();
