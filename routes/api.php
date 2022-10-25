@@ -96,5 +96,6 @@ Route::controller(DashboardIndex::class)->group(function(){
         Route::get('/line-chart-dashboard', 'lineChart');
         Route::get('/top-cs', 'topCS');
         Route::get('/top-product', 'topProduk');
+        Route::get('/card-status', 'cardStatus');
     });
 });

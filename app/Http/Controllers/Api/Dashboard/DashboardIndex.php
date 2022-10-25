@@ -20,6 +20,49 @@ class DashboardIndex extends Controller
         return new LengthAwarePaginator($items->forPage($page, $perPage), $items->count(), $perPage, $page, $options);
     }
 
+    public function cardStatus()
+    {
+        $user = request()->user();
+        $currentDate = Carbon::now();
+        $today = $currentDate->today()->format("Y-m-d");
+        $yesterday = $currentDate->subDays()->format("Y-m-d");
+        // this week
+        $start = Carbon::now()->startOfWeek();
+        $end = Carbon::now()->endOfWeek();
+        // last week
+        $subStart = Carbon::now()->subWeek()->startOfWeek()->format("Y-m-d");
+        $subEnd = Carbon::now()->subWeek()->endOfWeek()->format("Y-m-d");
+        $trToday = DB::table('transactions')
+            ->leftJoin('transaction_products', 'transactions.id', '=', 'transaction_products.transaction_id')
+            ->where('transactions.user_id', $user->id)
+            ->selectRaw('sum(transaction_products.jumlah_harga) as omset, sum(transaction_products.qty) as produk')
+            ->where('transactions.tanggal_transaksi', $today)->first();
+        $trYesterday = DB::table('transactions')
+            ->leftJoin('transaction_products', 'transactions.id', '=', 'transaction_products.transaction_id')
+            ->where('transactions.user_id', $user->id)
+            ->selectRaw('sum(transaction_products.jumlah_harga) as omset, sum(transaction_products.qty) as produk')
+            ->where('transactions.tanggal_transaksi', $yesterday)->first();
+        $trWeek = DB::table('transactions')
+            ->leftJoin('transaction_products', 'transactions.id', '=', 'transaction_products.transaction_id')
+            ->where('transactions.user_id', $user->id)
+            ->selectRaw('sum(transaction_products.jumlah_harga) as omset, sum(transaction_products.qty) as produk')
+            ->whereBetween('transactions.tanggal_transaksi', [$start, $end])->first();
+        $trSubWeek = DB::table('transactions')
+            ->leftJoin('transaction_products', 'transactions.id', '=', 'transaction_products.transaction_id')
+            ->where('transactions.user_id', $user->id)
+            ->selectRaw('sum(transaction_products.jumlah_harga) as omset, sum(transaction_products.qty) as produk')
+            ->whereBetween('transactions.tanggal_transaksi', [$subStart, $subEnd])->first();
+
+
+        $data[] = [
+            "today" => $trToday,
+            "yesterday" => $trYesterday,
+            "thisWeek" => $trWeek,
+            "lastWeek" => $trSubWeek,
+        ];
+        return response()->json(['today' => $trToday, 'yesterday' => $trYesterday, 'thisWeek' => $trWeek, 'lastWeek' => $trSubWeek], 200);
+    }
+
     public function lineChart()
     {
         $user = request()->user();
@@ -98,10 +141,10 @@ class DashboardIndex extends Controller
 
     public function topProduk()
     {
-        $pr = DB::table('transaction_products')
-            ->join('products', 'transaction_products.product_id', '=', 'products.id')
+        $pr = DB::table('products')
+            ->leftJoin('transaction_products', 'products.id', '=', 'transaction_products.product_id')
             ->select('transaction_products.*', 'products.*')
-            ->groupBy('transaction_products.product_id')
+            ->groupBy('products.id')
             ->selectRaw('transaction_products.qty, sum(qty) as total')
             ->orderBy('total', 'DESC')
             ->get();
@@ -109,7 +152,7 @@ class DashboardIndex extends Controller
         foreach ($pr as $row) {
             $data[] = [
                 'produk' => $row->product_name,
-                'qty' => $row->total
+                'qty' => $row->total != null ? $row->total : 0
             ];
         }
         return response()->json($this->paginate($data), 200);
