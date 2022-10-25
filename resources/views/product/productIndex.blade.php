@@ -43,7 +43,7 @@
                                 @forelse ($products as $key => $row)
                                     <tr>
                                         <td> {{ ++$key }} </td>
-                                        <td> <img src="{{ route('product-image', $row->image != null ? $row->image : 'kosong') }}" class="{{ $row->image != null ? '' : 'hidden' }}" alt="" title=""> <p class="{{ $row->image != null ? 'hidden' : '' }}">Data Masih kosong</p></td>
+                                        <td> <img src="{{ asset('storage/product/' . $row->image) }}" class="{{ $row->image != null ? '' : 'hidden' }}" alt="" title=""> <p class="{{ $row->image != null ? 'hidden' : '' }}">Data Masih kosong</p></td>
                                         <td> {{ $row->product_code }} </td>
                                         <td> {{ $row->product_bpom }} </td>
                                         <td> {{ $row->category_name }} </td>
