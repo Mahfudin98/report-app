@@ -48,7 +48,7 @@ class ApiProductsController extends Controller
                 'type' => $row->category_type,
             ];
         }
-        return new ProductsCollection($data);
+        return response()->json(['status' => 'success', 'data' => $data, 'message' => 'Data load successfully.'], 200);
     }
 
     public function category()
@@ -60,7 +60,7 @@ class ApiProductsController extends Controller
             $data[] = [
                 'code' => $row->category_code,
                 'category' => $row->category_name,
-                'type'  => $row->category_type,
+                'type'  => $row->category_pay,
                 'product' => $products->count(),
             ];
         }
