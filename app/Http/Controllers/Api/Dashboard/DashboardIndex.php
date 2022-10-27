@@ -54,13 +54,26 @@ class DashboardIndex extends Controller
             ->whereBetween('transactions.tanggal_transaksi', [$subStart, $subEnd])->first();
 
 
-        $data[] = [
-            "today" => $trToday,
-            "yesterday" => $trYesterday,
-            "thisWeek" => $trWeek,
-            "lastWeek" => $trSubWeek,
-        ];
-        return response()->json(['today' => $trToday, 'yesterday' => $trYesterday, 'thisWeek' => $trWeek, 'lastWeek' => $trSubWeek], 200);
+        // $data = [
+        //     "today_omset" => $trToday->omset,
+        //     "today_produk" => $trToday->produk,
+        //     "yesterday_omset" => $trYesterday->omset,
+        //     "yesterday_produk" => $trYesterday->produk,
+        //     "thisWeek_omset" => $trWeek->omset,
+        //     "thisWeek_produk" => $trWeek->produk,
+        //     "lastWeek_omset" => $trSubWeek->omset,
+        //     "lastWeek_produk" => $trSubWeek->produk,
+        // ];
+        return response()->json([
+            "today_omset" => $trToday->omset != null ? $trToday->omset : 0,
+            "today_produk" => $trToday->produk != null ? $trToday->produk : 0,
+            "yesterday_omset" => $trYesterday->omset != null ? $trYesterday->omset : 0,
+            "yesterday_produk" => $trYesterday->produk != null ? $trYesterday->produk : 0,
+            "thisWeek_omset" => $trWeek->omset != null ? $trWeek->omset : 0,
+            "thisWeek_produk" => $trWeek->produk != null ? $trWeek->produk : 0,
+            "lastWeek_omset" => $trSubWeek->omset != null ? $trSubWeek->omset : 0,
+            "lastWeek_produk" => $trSubWeek->produk != null ? $trSubWeek->produk : 0,
+        ], 200);
     }
 
     public function lineChart()
@@ -74,26 +87,26 @@ class DashboardIndex extends Controller
         $array_date = range($parse->startOfMonth()->format('d'), $parse->endOfMonth()->format('d'));
 
         $tr = DB::table('transactions')
-        ->join('transaction_products', 'transactions.id', '=', 'transaction_products.transaction_id')
-        ->select(
-            'transactions.tanggal_transaksi',
-            'transaction_products.*'
-        )
-        ->where('transactions.user_id', $user->id)
-        ->where('transactions.tanggal_transaksi', 'LIKE', '%' . $filter . '%')
-        ->groupBy('transactions.tanggal_transaksi')
-        ->selectRaw('transaction_products.*, sum(jumlah_harga) as total')
-        ->get();
+            ->join('transaction_products', 'transactions.id', '=', 'transaction_products.transaction_id')
+            ->select(
+                'transactions.tanggal_transaksi',
+                'transaction_products.*'
+            )
+            ->where('transactions.user_id', $user->id)
+            ->where('transactions.tanggal_transaksi', 'LIKE', '%' . $filter . '%')
+            ->groupBy('transactions.tanggal_transaksi')
+            ->selectRaw('transaction_products.*, sum(jumlah_harga) as total')
+            ->get();
 
         $data = [];
         $tn = [];
         foreach ($array_date as $row) {
-            $f_date = strlen($row) == 1 ? 0 . $row:$row;
+            $f_date = strlen($row) == 1 ? 0 . $row : $row;
             $date = $filter . '-' . $f_date;
             $total = $tr->firstWhere('tanggal_transaksi', $date);
             $data[] = [
                 'date' => $date,
-                'total' => $total ? $total->total:0,
+                'total' => $total ? $total->total : 0,
             ];
         }
         return response()->json(['data' => $data], 200);
@@ -131,7 +144,7 @@ class DashboardIndex extends Controller
         foreach ($tr as $row) {
             $data[] = [
                 'nama' => $row->nama_depan . " " . $row->nama_belakang,
-                'image' => Storage::disk('public')->url('user/'.$row->image),
+                'image' => Storage::disk('public')->url('user/' . $row->image),
                 'produk' => $row->produk,
                 'omset' => $row->omset,
             ];
