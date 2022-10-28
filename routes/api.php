@@ -76,6 +76,7 @@ Route::controller(ApiMembersController::class)->group(function(){
     Route::middleware(['auth:sanctum'])->group(function(){
         Route::get('/member-index-cs', 'indexCS');
         Route::get('/member-select', 'selectMember');
+        Route::post('/member-store', 'store');
     });
 });
 

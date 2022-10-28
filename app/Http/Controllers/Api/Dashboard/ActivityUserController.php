@@ -26,10 +26,10 @@ class ActivityUserController extends Controller
         foreach ($activity as $row) {
             switch ($row->method) {
                 case 'POST':
-                    $method = $user->username . " Menambahkan Transaksi";
+                    $method = $user->username . " Menambahkan";
                     break;
                 case 'DELETE':
-                    $method = $user->username . " Menghapus Transaksi";
+                    $method = $user->username . " Menghapus";
                     break;
                 default:
                     $method = "";
