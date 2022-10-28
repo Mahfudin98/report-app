@@ -24,11 +24,7 @@ class ApiTransactionController extends Controller
         $start = Carbon::now()->startOfMonth()->format('Y-m-d');
         $end = Carbon::now()->endOfMonth()->format('Y-m-d');
 
-        if (request()->date != '') {
-            $date = explode(' - ', request()->date);
-            $start = Carbon::parse($date[0])->format('Y-m-d');
-            $end = Carbon::parse($date[1])->format('Y-m-d');
-        }
+
         $tr = DB::table('transactions')
             ->leftJoin('members', 'transactions.member_id', '=', 'members.id')
             ->leftJoin('customers', 'transactions.id', '=', 'customers.transaction_id')
@@ -41,11 +37,15 @@ class ApiTransactionController extends Controller
                 'customers.customer_alamat',
             )
             ->where('transactions.user_id', $user->id)
-            ->whereBetween('transactions.tanggal_transaksi', [$start, $end])
-            ->orderBy('transactions.tanggal_transaksi', 'Desc')
-            ->get();
+            ->orderBy('transactions.tanggal_transaksi', 'Desc');
+        if (request()->date != '') {
+            $date = explode(' - ', request()->date);
+            $start = Carbon::parse($date[0])->format('Y-m-d');
+            $end = Carbon::parse($date[1])->format('Y-m-d');
+            $tr = $tr->whereBetween('transactions.tanggal_transaksi', [$start, $end]);
+        }
         $data = [];
-        foreach ($tr as $row) {
+        foreach ($tr->get() as $row) {
             $prod = TransactionProduct::where('transaction_id', $row->id)->get();
             $data[] = [
                 'member' => $row->member_id == null ? 'customer' : 'member',

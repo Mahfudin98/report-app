@@ -31,8 +31,8 @@ class ApiUsersController extends Controller
             'divisions.division_code',
             'divisions.division_name'
             )->where('users.user_type', '!=', true)->orderBy('user_details.nama_depan', 'ASC');
-        if (request()->q != null) {
-            $users = $users->where('nama_depan', 'LIKE', '%' . request()->q . '%');
+        if (request()->search != null) {
+            $users = $users->where('nama_depan', 'LIKE', '%' . request()->search . '%');
         }
         $users = $users->get();
         $data = [];
