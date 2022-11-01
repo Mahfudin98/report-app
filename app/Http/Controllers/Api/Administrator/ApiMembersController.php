@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use App\Helpers\UserActivity as UserActivityHelper;
+use Illuminate\Support\Facades\File;
 
 class ApiMembersController extends Controller
 {
@@ -28,6 +29,7 @@ class ApiMembersController extends Controller
         foreach ($members->get() as $row) {
             $path = Storage::disk('public')->url('member/'.$row->image);
             $data[] =[
+                'id' => $row->id,
                 'nama' => $row->member_name,
                 'alamat' => $row->member_alamat,
                 'phone' => $row->member_phone,
@@ -83,6 +85,60 @@ class ApiMembersController extends Controller
             ]);
             DB::commit();
             UserActivityHelper::addToLog($request->member_type != 0 ? 'Add Member Agen ' . $request->member_name : 'Add Member Reseller ' . $request->member_name);
+            return response()->json(['status' => 'success'], 200);
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json(['error' => $e->getMessage()]);
+        }
+    }
+
+    public function edit($id)
+    {
+        $member = Member::where('id', $id)->first();
+        return response()->json(['status' => 'success', 'data' => $member], 200);
+    }
+
+    public function update(Request $request, $id)
+    {
+        $member = Member::where('id', $id)->first();
+        $this->validate($request, [
+            'member_name'   => 'required',
+            'member_phone'  => 'required',
+            'district_id'   => 'nullable',
+            'join_on'       => 'nullable',
+            'image'         => 'nullable|image|mimes:png,jpeg,jpg|max:2048',
+            'member_type'   => 'required',
+        ]);
+        $filename = $member->image;
+
+        try {
+            if ($request->hasFile('image')) {
+                $file = $request->file('image');
+                File::delete(storage_path('app/public/member/' . $filename));
+                $filename = time() . Str::slug($request->member_name) . '.' . $file->getClientOriginalExtension();
+                $file->storeAs('public/member', $filename);
+            } else {
+                $filename = $member->image;
+            }
+            $district = '';
+            if ($request->district_id != '') {
+                $district = $request->district_id;
+            } else {
+                $district = $member->district_id;
+            }
+
+            $member->update([
+                'member_name'   => $request->member_name,
+                'member_phone'  => $request->member_phone,
+                'member_alamat' => $request->member_alamat,
+                'district_id'   => $district,
+                'join_on'       => $request->join_on,
+                'image'         => $filename,
+                'member_type'   => $request->member_type,
+                'member_status' => true,
+            ]);
+            DB::commit();
+            UserActivityHelper::addToLog($request->member_type != 0 ? 'Update Member Agen ' . $request->member_name : 'Update Member Reseller ' . $request->member_name);
             return response()->json(['status' => 'success'], 200);
         } catch (\Exception $e) {
             DB::rollback();

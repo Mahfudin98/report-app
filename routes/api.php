@@ -77,6 +77,8 @@ Route::controller(ApiMembersController::class)->group(function(){
         Route::get('/member-index-cs', 'indexCS');
         Route::get('/member-select', 'selectMember');
         Route::post('/member-store', 'store');
+        Route::get('/member-edit/{id}', 'edit');
+        Route::post('/member-update/{id}', 'update');
     });
 });
 
