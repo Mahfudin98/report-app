@@ -152,6 +152,7 @@ class ApiTransactionController extends Controller
             'product_price'     => 'required',
             'qty'               => 'required',
             'discount'          => 'nullable',
+            'addition'          => 'nullable',
         ]);
 
         $user = request()->user();
@@ -200,7 +201,8 @@ class ApiTransactionController extends Controller
                     'product_price'     => $data['product_price'][$item],
                     'qty'               => $data['qty'][$item],
                     'discount'          => $data['discount'][$item],
-                    'jumlah_harga'      => $data['qty'][$item] * $data['product_price'][$item] - $data['discount'][$item]
+                    'addition'          => $data['addition'][$item],
+                    'jumlah_harga'      => $data['qty'][$item] * $data['product_price'][$item] - $data['discount'][$item] + $data['addition'][$item]
                 ];
 
                 $transactionProduct = TransactionProduct::create($product);
