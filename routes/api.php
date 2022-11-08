@@ -61,6 +61,7 @@ Route::controller(ApiTransactionController::class)->group(function(){
         Route::get('/transaction-show/{code}', 'show');
         Route::post('/transaction-store', 'transactionStore');
         Route::delete('/transaction-delete/{code}', 'delete');
+        Route::get('/all-transaction', 'allTransaction');
     });
 });
 
