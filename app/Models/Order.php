@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Customer extends Model
+class Order extends Model
 {
     use HasFactory;
     protected $guarded = [];
@@ -20,8 +20,13 @@ class Customer extends Model
         return $this->belongsTo(Transaction::class);
     }
 
-    public function order()
+    public function member()
     {
-        return $this->hasMany(Order::class);
+        return $this->belongsTo(Member::class);
+    }
+
+    public function customer()
+    {
+        return $this->belongsTo(Customer::class);
     }
 }

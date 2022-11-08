@@ -29,4 +29,9 @@ class Transaction extends Model
     {
         return $this->hasMany(TransactionProduct::class);
     }
+
+    public function order()
+    {
+        return $this->hasMany(Order::class);
+    }
 }

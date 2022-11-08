@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
 use App\Helpers\UserActivity as UserActivityHelper;
+use App\Models\Order;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -64,59 +65,6 @@ class ApiTransactionController extends Controller
             ];
         }
         return response()->json($this->paginate($data), 200);
-    }
-
-    public function allTransaction()
-    {
-        $start = Carbon::now()->startOfMonth()->format('Y-m-d');
-        $end = Carbon::now()->endOfMonth()->format('Y-m-d');
-
-
-        $tr = DB::table('transactions')
-            ->leftJoin('members', 'transactions.member_id', '=', 'members.id')
-            ->leftJoin('customers', 'transactions.id', '=', 'customers.transaction_id')
-            ->select(
-                'transactions.*',
-                'members.member_name',
-                'members.member_alamat',
-                'members.member_type',
-                'members.member_phone',
-                'customers.customer_name',
-                'customers.customer_alamat',
-                'customers.customer_phone',
-            )
-            ->orderBy('transactions.tanggal_transaksi', 'Desc');
-        if (request()->date != '') {
-            $date = explode(' - ', request()->date);
-            $start = Carbon::parse($date[0])->format('Y-m-d');
-            $end = Carbon::parse($date[1])->format('Y-m-d');
-            $tr = $tr->whereBetween('transactions.tanggal_transaksi', [$start, $end]);
-        }
-        $data = [];
-        foreach ($tr->get() as $row) {
-            // $prod = TransactionProduct::where('transaction_id', $row->id)->get();
-            $prod = DB::table('transaction_products')->join('products', 'transaction_products.product_id', '=', 'products.id')
-                ->select('transaction_products.*')
-                ->where('transaction_id', $row->id)->selectRaw('products.product_weight * transaction_products.qty as weight')->get();
-            $data[] = [
-                'member' => $row->member_id == null ? 'customer' : 'member',
-                'nama' => $row->member_id == null ? $row->customer_name : $row->member_name,
-                'alamat' => $row->member_id == null ? $row->customer_alamat : $row->member_alamat,
-                'nomor_pesanan' => $row->nomor_pesanan,
-                'tanggal' => $row->tanggal_transaksi,
-                'phone' => $row->member_id != null ? $row->member_phone : $row->customer_phone,
-                'ongkir' => $row->ongkir,
-                'image' => $row->image != null ? Storage::disk('public')->url('transaction/' . $row->image) : null,
-                'expedisi' => $row->expedisi,
-                'origin_customer' => $row->origin_customer == 0 ? 'Iklan ADV' : ($row->origin_customer == 1 ? 'Marketplace' : 'Reorder'),
-                'type_transaction' => $row->type_transaction == 1 ? 'Transfer' : 'COD',
-                'type_customer' => $row->member_id != null ? ($row->member_type == 1 ? 'Agen' : 'Reseller') : 'Customer',
-                'produk' => $prod,
-                'weight' => $prod->sum('weight'),
-                'total_harga' => $prod->sum('jumlah_harga')
-            ];
-        }
-        return response()->json(['status' => 'success', 'data' => $data]);
     }
 
     public function paginate($items, $perPage = 50, $page = null, $options = [])
@@ -271,6 +219,13 @@ class ApiTransactionController extends Controller
                     'customer_alamat'   => $request->customer_alamat
                 ]);
             }
+            Order::create([
+                'user_id'        => $user->id,
+                'transaction_id' => $transaction->id,
+                'member_id'      => $request->type_customer != 2 ? $request->member_id : null,
+                'customer_id'    => $request->type_customer == 2 ? $customer->id : null,
+                'date'           => $request->tanggal_transaksi,
+            ]);
             DB::commit();
             UserActivityHelper::addToLog($request->type_customer != 2 ? 'Add Transaction Member' : 'Add Transaction Customer');
             return response()->json(['status' => 'success'], 200);
@@ -286,7 +241,75 @@ class ApiTransactionController extends Controller
         $tr = Transaction::where('nomor_pesanan', $code)->where('user_id', $user->id)->first();
         UserActivityHelper::addToLog($tr->type_customer != 2 ? 'Remove Transaction Member' : 'Remove Transaction Customer');
         $pr = TransactionProduct::where('transaction_id', $tr->id)->delete();
+        $order = Order::where('transaction_id', $tr->id)->delete();
         $tr->delete();
         return response()->json(['status' => 'success']);
+    }
+
+    public function order()
+    {
+        $start = Carbon::now()->startOfMonth()->format('Y-m-d');
+        $end = Carbon::now()->endOfMonth()->format('Y-m-d');
+
+        $order = DB::table('orders')
+            ->join('transactions', 'orders.transaction_id', '=', 'transactions.id')
+            ->leftJoin('members', 'orders.member_id', '=', 'members.id')
+            ->leftJoin('customers', 'orders.customer_id', '=', 'customers.id')
+            ->select(
+                'orders.*',
+                'transactions.id',
+                'transactions.nomor_pesanan',
+                'transactions.image',
+                'transactions.ongkir',
+                'transactions.expedisi',
+                'transactions.type_transaction',
+                'transactions.catatan',
+                'members.member_name',
+                'members.member_alamat',
+                'members.member_phone',
+                'customers.customer_name',
+                'customers.customer_alamat',
+                'customers.customer_phone',
+            )->orderBy('orders.date', 'Desc');
+            if (request()->date != '') {
+                $date = explode(' - ', request()->date);
+                $start = Carbon::parse($date[0])->format('Y-m-d');
+                $end = Carbon::parse($date[1])->format('Y-m-d');
+                $order = $order->whereBetween('orders.date', [$start, $end]);
+            }
+        $data = [];
+        foreach ($order->get() as $row) {
+            // $prod = TransactionProduct::where('transaction_id', $row->id)->get();
+            $prod = DB::table('transaction_products')->join('products', 'transaction_products.product_id', '=', 'products.id')
+                ->select('transaction_products.*')
+                ->where('transaction_id', $row->transaction_id)->selectRaw('products.product_weight * transaction_products.qty as weight')->get();
+            $data[] = [
+                'member' => $row->member_id == null ? 'customer' : 'member',
+                'nama' => $row->member_id == null ? $row->customer_name : $row->member_name,
+                'alamat' => $row->member_id == null ? $row->customer_alamat : $row->member_alamat,
+                'nomor_pesanan' => $row->nomor_pesanan,
+                'tanggal' => $row->date,
+                'phone' => $row->member_id != null ? $row->member_phone : $row->customer_phone,
+                'ongkir' => $row->ongkir,
+                'image' => $row->image != null ? Storage::disk('public')->url('transaction/' . $row->image) : null,
+                'expedisi' => $row->expedisi,
+                'type_transaction' => $row->type_transaction == 1 ? 'Transfer' : 'COD',
+                'produk' => $prod,
+                'weight' => $prod->sum('weight'),
+                'status' => $row->status,
+                'total_harga' => $prod->sum('jumlah_harga')
+            ];
+        }
+        return response()->json(['status' => 'success', 'data' => $data]);
+    }
+
+    public function updateOrder($code)
+    {
+        $tr = Transaction::where('nomor_pesanan', $code)->first();
+        $order = Order::where('transaction_id', $tr->id)->first();
+        $order->update([
+            'status' => $order->status == 0 ? 1 : 0
+        ]);
+        return response()->json(['status' => 'success', 'data' => $order]);
     }
 }
