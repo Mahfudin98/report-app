@@ -13,6 +13,7 @@ use Illuminate\Support\Str;
 use Carbon\Carbon;
 use App\Helpers\UserActivity as UserActivityHelper;
 use App\Models\Order;
+use App\Models\UserDetail;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -283,8 +284,10 @@ class ApiTransactionController extends Controller
             $prod = DB::table('transaction_products')->join('products', 'transaction_products.product_id', '=', 'products.id')
                 ->select('transaction_products.*')
                 ->where('transaction_id', $row->transaction_id)->selectRaw('products.product_weight * transaction_products.qty as weight')->get();
+            $user = UserDetail::where('user_id', $row->user_id)->get();
             $data[] = [
                 'member' => $row->member_id == null ? 'customer' : 'member',
+                'user'  => $user[0]['nama_depan'] . ' ' . $user[0]['nama_belakang'],
                 'nama' => $row->member_id == null ? $row->customer_name : $row->member_name,
                 'alamat' => $row->member_id == null ? $row->customer_alamat : $row->member_alamat,
                 'nomor_pesanan' => $row->nomor_pesanan,
