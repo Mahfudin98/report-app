@@ -249,9 +249,11 @@ class ApiTransactionController extends Controller
 
     public function order()
     {
-        $start = Carbon::now()->startOfMonth()->format('Y-m-d');
-        $end = Carbon::now()->endOfMonth()->format('Y-m-d');
-
+        if (request()->date != '') {
+            $date = Carbon::parse(request()->date)->format('d');
+        } else {
+            $date = Carbon::today()->format('d');
+        }
         $order = DB::table('orders')
             ->join('transactions', 'orders.transaction_id', '=', 'transactions.id')
             ->leftJoin('members', 'orders.member_id', '=', 'members.id')
@@ -272,15 +274,9 @@ class ApiTransactionController extends Controller
                 'customers.customer_name',
                 'customers.customer_alamat',
                 'customers.customer_phone',
-            )->orderBy('orders.date', 'Desc');
-            if (request()->date != '') {
-                $date = explode(' - ', request()->date);
-                $start = Carbon::parse($date[0])->format('Y-m-d');
-                $end = Carbon::parse($date[1])->format('Y-m-d');
-                $order = $order->whereBetween('orders.date', [$start, $end]);
-            }
+            )->orderBy('orders.date', 'Desc')->whereDay('date', '=', $date)->get();
         $data = [];
-        foreach ($order->get() as $row) {
+        foreach ($order as $row) {
             // $prod = TransactionProduct::where('transaction_id', $row->id)->get();
             $prod = DB::table('transaction_products')->join('products', 'transaction_products.product_id', '=', 'products.id')
                 ->select('transaction_products.*')
