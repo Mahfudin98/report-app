@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\Auth\ApiUsersController;
 use App\Http\Controllers\Api\Dashboard\ActivityUserController;
 use App\Http\Controllers\Api\Dashboard\DashboardIndex;
 use App\Http\Controllers\Api\Dashboard\ProfileDashboardController;
+use App\Http\Controllers\Api\Owner\Dashboard\DashboardController;
 use App\Http\Controllers\Api\Transaction\ApiTransactionController;
 use App\Http\Controllers\Api\Transaction\RajaOngkirController;
 use Illuminate\Http\Request;
@@ -102,5 +103,14 @@ Route::controller(DashboardIndex::class)->group(function(){
         Route::get('/top-cs', 'topCS');
         Route::get('/top-product', 'topProduk');
         Route::get('/card-status', 'cardStatus');
+    });
+});
+
+Route::controller(DashboardController::class)->group(function(){
+    Route::middleware(['auth:sanctum'])->group(function(){
+        Route::get('/owner-chart-dashboard', 'lineChart');
+        Route::get('/owner-top-cs', 'topCS');
+        Route::get('/owner-top-product', 'topProduk');
+        Route::get('/owner-cs-performance', 'csPerformance');
     });
 });
