@@ -129,6 +129,7 @@ class DashboardController extends Controller
             ->leftJoin('transaction_products', 'transactions.id', '=', 'transaction_products.transaction_id')
             ->select(
                 'transactions.id',
+                'transactions.user_id',
                 'transactions.nomor_pesanan',
                 'transaction_products.qty',
                 'transaction_products.jumlah_harga',
@@ -141,13 +142,51 @@ class DashboardController extends Controller
             ->selectRaw('transaction_products.jumlah_harga, sum(jumlah_harga) as omset, transaction_products.qty, sum(qty) as produk')
             ->orderBy('omset', 'DESC')
             ->get();
+
         $data = [];
         foreach ($tr as $row) {
             $data[] = [
+                'user_id' => $row->user_id,
                 'nama' => $row->nama_depan . " " . $row->nama_belakang,
                 'image' => Storage::disk('public')->url('user/' . $row->image),
                 'produk' => $row->produk,
                 'omset' => $row->omset,
+            ];
+        }
+        return response()->json(['data' => $data], 200);
+    }
+
+    public function chartId($id)
+    {
+        $user = request()->user();
+        $year = request()->year;
+        $month = request()->month;
+        $filter = $year . '-' . $month;
+
+        $parse = Carbon::parse($filter);
+        $array_date = range($parse->startOfMonth()->format('d'), $parse->endOfMonth()->format('d'));
+
+        $tr = DB::table('transactions')
+            ->join('transaction_products', 'transactions.id', '=', 'transaction_products.transaction_id')
+            ->select(
+                'transactions.tanggal_transaksi',
+                'transaction_products.*'
+            )
+            ->where('transactions.user_id', $id)
+            ->where('transactions.tanggal_transaksi', 'LIKE', '%' . $filter . '%')
+            ->groupBy('transactions.tanggal_transaksi')
+            ->selectRaw('transaction_products.*, sum(jumlah_harga) as total')
+            ->get();
+
+        $data = [];
+        $tn = [];
+        foreach ($array_date as $row) {
+            $f_date = strlen($row) == 1 ? 0 . $row : $row;
+            $date = $filter . '-' . $f_date;
+            $total = $tr->firstWhere('tanggal_transaksi', $date);
+            $data[] = [
+                'date' => $date,
+                'total' => $total ? $total->total : 0,
             ];
         }
         return response()->json(['data' => $data], 200);

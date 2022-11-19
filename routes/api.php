@@ -112,5 +112,6 @@ Route::controller(DashboardController::class)->group(function(){
         Route::get('/owner-top-cs', 'topCS');
         Route::get('/owner-top-product', 'topProduk');
         Route::get('/owner-cs-performance', 'csPerformance');
+        Route::get('/owner-chart/{id}', 'chartId');
     });
 });
