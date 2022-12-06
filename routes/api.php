@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\Dashboard\ActivityUserController;
 use App\Http\Controllers\Api\Dashboard\DashboardIndex;
 use App\Http\Controllers\Api\Dashboard\ProfileDashboardController;
 use App\Http\Controllers\Api\Owner\Dashboard\DashboardController;
+use App\Http\Controllers\Api\Owner\TargetController;
 use App\Http\Controllers\Api\Transaction\ApiTransactionController;
 use App\Http\Controllers\Api\Transaction\RajaOngkirController;
 use Illuminate\Http\Request;
@@ -113,5 +114,12 @@ Route::controller(DashboardController::class)->group(function(){
         Route::get('/owner-top-product', 'topProduk');
         Route::get('/owner-cs-performance', 'csPerformance');
         Route::get('/owner-chart/{id}', 'chartId');
+        Route::get('/owner-bar/{id}', 'barId');
     });
+});
+
+Route::controller(TargetController::class)->group(function(){
+    Route::get('/owner-target-index', 'index');
+    Route::post('/owner-target-store', 'store');
+    Route::get('/owner-target-persen/{id}', 'percent');
 });

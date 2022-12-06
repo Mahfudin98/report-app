@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Api\Owner\Dashboard;
 
 use App\Http\Controllers\Controller;
+use App\Models\Target;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Pagination\Paginator;
@@ -143,6 +145,7 @@ class DashboardController extends Controller
             ->orderBy('omset', 'DESC')
             ->get();
 
+
         $data = [];
         foreach ($tr as $row) {
             $data[] = [
@@ -158,7 +161,6 @@ class DashboardController extends Controller
 
     public function chartId($id)
     {
-        $user = request()->user();
         $year = request()->year;
         $month = request()->month;
         $filter = $year . '-' . $month;
@@ -186,6 +188,37 @@ class DashboardController extends Controller
             $total = $tr->firstWhere('tanggal_transaksi', $date);
             $data[] = [
                 'date' => $date,
+                'total' => $total ? $total->total : 0,
+            ];
+        }
+        return response()->json(['data' => $data], 200);
+    }
+
+    public function barId($id)
+    {
+        $year = request()->year;
+        $month = [];
+        for ($i = 0; $i <= 11; $i++) {
+            $month[] = date('m', mktime(0, 0, 0, $i + 1, 1, date($year)));
+        }
+
+        $tr = DB::table('transactions')
+            ->join('transaction_products', 'transactions.id', '=', 'transaction_products.transaction_id')
+            ->select(
+                DB::raw("(sum(transaction_products.jumlah_harga)) as total"),
+                DB::raw("(DATE_FORMAT(transactions.tanggal_transaksi, '%m')) as month")
+            )
+            ->where('transactions.user_id', $id)
+            ->where(DB::raw('YEAR(transactions.tanggal_transaksi)'), '=', $year)
+            ->orderBy('transactions.tanggal_transaksi')
+            ->groupBy(DB::raw("DATE_FORMAT(transactions.tanggal_transaksi, '%m')"))
+            ->get();
+        $data = [];
+        foreach ($month as $row) {
+            $f_date = strlen($row) == 1 ? 0 . $row : $row;
+            $total = $tr->firstWhere('month', $row);
+            $data[] = [
+                'date' => $f_date,
                 'total' => $total ? $total->total : 0,
             ];
         }
