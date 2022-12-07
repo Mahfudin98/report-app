@@ -121,5 +121,5 @@ Route::controller(DashboardController::class)->group(function(){
 Route::controller(TargetController::class)->group(function(){
     Route::get('/owner-target-index', 'index');
     Route::post('/owner-target-store', 'store');
-    Route::get('/owner-target-persen/{id}', 'percent');
+    Route::get('/owner-target-persen', 'percent');
 });
