@@ -95,6 +95,7 @@ Route::controller(ProfileDashboardController::class)->group(function(){
 Route::controller(ActivityUserController::class)->group(function(){
     Route::middleware(['auth:sanctum'])->group(function(){
         Route::get('/user-activity/{username}', 'userActivity');
+        Route::get('/user-activity-list/{id}', 'userActivityDetail');
     });
 });
 
