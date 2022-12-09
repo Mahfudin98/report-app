@@ -81,7 +81,7 @@ class TargetController extends Controller
             $actual = $row->omset;
             $i = $tData ? $tData->target : 1000000000;
             $w = $i / $user;
-            $percent = ($actual / $w) * (100/100);
+            $percent = ($actual / $w) * 100;
             $hasil = number_format($percent, 2, '.', '');
 
             $data['month'][] = [
@@ -104,8 +104,8 @@ class TargetController extends Controller
                 $actual = $row->omset;
                 $i = $tData ? $tData->target : 1000000000;
                 $w = $i / $user;
-                $f = round($w /  ($minggu - 1 ));
-                $percent = ($actual / $f) * (100/100);
+                $f = round($w /  ($minggu - 1));
+                $percent = ($actual / $f) * 100;
                 $hasil = number_format($percent, 2, '.', '');
 
                 $data['week'][] = [
@@ -132,9 +132,9 @@ class TargetController extends Controller
                 $actual = $row->omset;
                 $i = $tData ? $tData->target : 1000000000;
                 $w = $i / $user;
-                $f = round($w /  ($minggu - 1 ));
+                $f = round($w /  ($minggu - 1));
                 $o = round($f / 6);
-                $percent = ($actual / $o) * (100/100);
+                $percent = ($actual / $o) * 100;
                 $hasil = number_format($percent, 2, '.', '');
 
                 $data['day'][] = [
