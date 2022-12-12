@@ -228,7 +228,7 @@ class ApiTransactionController extends Controller
                 'date'           => $request->tanggal_transaksi,
             ]);
             DB::commit();
-            UserActivityHelper::addToLog($request->type_customer != 2 ? 'Add Transaction Member' : 'Add Transaction Customer');
+            UserActivityHelper::addToLogTR($request->type_customer != 2 ? 'Add Transaction Member' : 'Add Transaction Customer', $request->tanggal_transaksi);
             return response()->json(['status' => 'success'], 200);
         } catch (\Exception $e) {
             DB::rollback();

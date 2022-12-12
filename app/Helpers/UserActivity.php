@@ -22,6 +22,20 @@ class UserActivity
         UserActivityModel::create($log);
     }
 
+    public static function addToLogTR($activity, $timeDate)
+    {
+        $time = Carbon::now();
+        $log = [];
+        $log['date_time'] = $timeDate . ' ' . $time->format('H:i:s');
+        $log['activity'] = $activity;
+        $log['url'] = request()->fullUrl();
+        $log['method'] = request()->method();
+        $log['ip'] = request()->ip();
+        $log['browser'] = request()->header('user-agent');
+        $log['user_id'] = auth()->check() ? auth()->user()->id : null;
+        UserActivityModel::create($log);
+    }
+
     public static function userActivityLists()
     {
         return UserActivityModel::latest()->get();
