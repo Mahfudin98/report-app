@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\Owner;
 use App\Http\Controllers\Controller;
 use App\Models\Target;
 use App\Models\User;
+use App\Models\UserDetail;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -12,10 +13,88 @@ use Illuminate\Support\Facades\Storage;
 
 class TargetController extends Controller
 {
-    public function index()
+    public function advList()
     {
-        $target = Target::all();
-        return response()->json(['status' => "Success", 'data' => $target], 200);
+        $user = DB::table('users')
+            ->join('user_details', 'users.id', '=', 'user_details.user_id')
+            ->where('users.division_id', 2)
+            ->get();
+        $data = [];
+        foreach ($user as $row) {
+            $count = User::where('parent_id', $row->user_id)->count();
+            $data[] = [
+                'id'       => $row->user_id,
+                'nama'     => $row->nama_depan . ' ' . $row->nama_belakang,
+                'image'    => Storage::disk('public')->url('user/' . $row->image),
+                'cs_count' => $count,
+            ];
+        }
+        return response()->json(['status' => "Success", 'data' => $data], 200);
+    }
+    public function index($id)
+    {
+        $target = DB::table('targets')
+            ->leftJoin('user_details', 'targets.user_id', '=', 'user_details.user_id')
+            ->select(
+                'targets.id',
+                'targets.user_id',
+                'user_details.nama_depan',
+                'user_details.nama_belakang',
+                'user_details.image',
+                'targets.target',
+                'targets.periode',
+            )
+            ->where('targets.user_id', $id)
+            ->get();
+        $data = [];
+        foreach ($target as $row) {
+            $tr = DB::table('transactions')
+                ->join('transaction_products', 'transactions.id', '=', 'transaction_products.transaction_id')
+                ->join('users', 'transactions.user_id', '=', 'users.id')
+                ->where('users.parent_id', $row->user_id)
+                ->whereMonth('transactions.tanggal_transaksi', Carbon::parse($row->periode)->format('m'))
+                ->whereYear('transactions.tanggal_transaksi', Carbon::parse($row->periode)->format('Y'))
+                ->groupBy('transactions.tanggal_transaksi')
+                ->selectRaw('transaction_products.*, sum(jumlah_harga) as total')
+                ->get();
+
+            $user = User::where('parent_id', $row->user_id)->count();
+            $actual = $tr->sum('total');
+            $i = $row->target;
+            $w = $i / $user;
+            $percent = ($actual / $w) * 100;
+            $hasil = number_format($percent, 2, '.', '');
+
+            $status = "";
+            switch ($hasil) {
+                case $hasil >= 100:
+                    $status = "Menakjubkan";
+                    break;
+                case $hasil >= 80:
+                    $status = "Sangat Memuaskan";
+                    break;
+                case $hasil >= 50:
+                    $status = "Cukup Memuaskan";
+                    break;
+                case $hasil < 50:
+                    $status = "Tidak Memuaskan";
+                    break;
+                default:
+                    $status = "Tidak Memuaskan";
+                    break;
+            }
+
+            $data[] = [
+                'nama'    => $row->nama_depan . ' ' . $row->nama_belakang,
+                'periode' => $row->periode,
+                'target'  => $row->target,
+                'omset'   => $actual,
+                'persen'  => $hasil,
+                'status'  => $status,
+            ];
+        }
+
+        return response()->json(['status' => "Success", 'data' => $data], 200);
     }
 
     public function store(Request $request)

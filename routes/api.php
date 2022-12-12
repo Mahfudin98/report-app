@@ -120,7 +120,8 @@ Route::controller(DashboardController::class)->group(function(){
 });
 
 Route::controller(TargetController::class)->group(function(){
-    Route::get('/owner-target-index', 'index');
+    Route::get('/owner-target-adv', 'advList');
+    Route::get('/owner-target-index/{id}', 'index');
     Route::post('/owner-target-store', 'store');
     Route::get('/owner-target-persen', 'percent');
 });
