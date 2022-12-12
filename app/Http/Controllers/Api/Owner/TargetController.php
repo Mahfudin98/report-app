@@ -31,8 +31,9 @@ class TargetController extends Controller
         }
         return response()->json(['status' => "Success", 'data' => $data], 200);
     }
-    public function index($id)
+    public function index()
     {
+        $id = request()->id;
         $target = DB::table('targets')
             ->leftJoin('user_details', 'targets.user_id', '=', 'user_details.user_id')
             ->select(
