@@ -46,6 +46,7 @@ class TargetController extends Controller
                 'targets.periode',
             )
             ->where('targets.user_id', $id)
+            ->orderBy('targets.periode', "DESC")
             ->get();
         $data = [];
         foreach ($target as $row) {
