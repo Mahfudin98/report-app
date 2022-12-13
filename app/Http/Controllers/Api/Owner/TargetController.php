@@ -22,7 +22,7 @@ class TargetController extends Controller
             ->get();
         $data = [];
         foreach ($user as $row) {
-            $count = User::where('parent_id', $row->user_id)->count();
+            $count = User::where('parent_id', $row->user_id)->where('status', 1)->count();
             $data[] = [
                 'id'       => $row->user_id,
                 'nama'     => $row->nama_depan . ' ' . $row->nama_belakang,
@@ -61,7 +61,7 @@ class TargetController extends Controller
                 ->selectRaw('transaction_products.*, sum(jumlah_harga) as total')
                 ->get();
 
-            $user = User::where('parent_id', $row->user_id)->count();
+            $user = User::where('parent_id', $row->user_id)->where('status', 1)->count();
             $actual = $tr->sum('total');
             $i = $row->target;
             $w = $i / $user;
@@ -159,7 +159,7 @@ class TargetController extends Controller
         foreach ($months as $row) {
             $target = Target::where('user_id', $row->parent_id)->whereMonth('periode', $month)->whereYear('periode', $year)->get();
             $tData = $target->firstWhere('user_id', $row->parent_id);
-            $user = User::where('parent_id', $row->parent_id)->count();
+            $user = User::where('parent_id', $row->parent_id)->where('status', 1)->count();
             $actual = $row->omset;
             $i = $tData ? $tData->target : 1000000000;
             $w = $i / $user;
@@ -181,7 +181,7 @@ class TargetController extends Controller
             foreach ($weeks as $row) {
                 $target = Target::where('user_id', $row->parent_id)->whereMonth('periode', $month)->whereYear('periode', $year)->get();
                 $tData = $target->firstWhere('user_id', $row->parent_id);
-                $user = User::where('parent_id', $row->parent_id)->count();
+                $user = User::where('parent_id', $row->parent_id)->where('status', 1)->count();
                 $minggu = Carbon::parse($tData->periode)->weekNumberInMonth;
                 $actual = $row->omset;
                 $i = $tData ? $tData->target : 1000000000;
@@ -209,7 +209,7 @@ class TargetController extends Controller
             foreach ($days as $row) {
                 $target = Target::where('user_id', $row->parent_id)->whereMonth('periode', $month)->whereYear('periode', $year)->get();
                 $tData = $target->firstWhere('user_id', $row->parent_id);
-                $user = User::where('parent_id', $row->parent_id)->count();
+                $user = User::where('parent_id', $row->parent_id)->where('status', 1)->count();
                 $minggu = Carbon::parse($tData->periode)->weekNumberInMonth;
                 $actual = $row->omset;
                 $i = $tData ? $tData->target : 1000000000;
