@@ -17,7 +17,8 @@ class TargetController extends Controller
     {
         $user = DB::table('users')
             ->join('user_details', 'users.id', '=', 'user_details.user_id')
-            ->where('users.division_id', 2)
+            ->join('divisions', 'divisions.id', '=', 'users.division_id')
+            ->where('divisions.division_code', 'ADV4256')
             ->get();
         $data = [];
         foreach ($user as $row) {
