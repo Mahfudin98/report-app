@@ -56,6 +56,36 @@ class DashboardController extends Controller
         return response()->json(['data' => $data], 200);
     }
 
+    public function barChart()
+    {
+        $year = request()->year;
+        $month = [];
+        for ($i = 0; $i <= 11; $i++) {
+            $month[] = date('m', mktime(0, 0, 0, $i + 1, 1, date($year)));
+        }
+
+        $tr = DB::table('transactions')
+            ->join('transaction_products', 'transactions.id', '=', 'transaction_products.transaction_id')
+            ->select(
+                DB::raw("(sum(transaction_products.jumlah_harga)) as total"),
+                DB::raw("(DATE_FORMAT(transactions.tanggal_transaksi, '%m')) as month")
+            )
+            ->where(DB::raw('YEAR(transactions.tanggal_transaksi)'), '=', $year)
+            ->orderBy('transactions.tanggal_transaksi')
+            ->groupBy(DB::raw("DATE_FORMAT(transactions.tanggal_transaksi, '%m')"))
+            ->get();
+        $data = [];
+        foreach ($month as $row) {
+            $f_date = strlen($row) == 1 ? 0 . $row : $row;
+            $total = $tr->firstWhere('month', $row);
+            $data[] = [
+                'date' => $f_date,
+                'total' => $total ? $total->total : 0,
+            ];
+        }
+        return response()->json(['data' => $data], 200);
+    }
+
     public function topCS()
     {
         $start = Carbon::now()->startOfMonth()->format('Y-m-d');

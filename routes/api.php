@@ -111,6 +111,7 @@ Route::controller(DashboardIndex::class)->group(function(){
 Route::controller(DashboardController::class)->group(function(){
     Route::middleware(['auth:sanctum'])->group(function(){
         Route::get('/owner-chart-dashboard', 'lineChart');
+        Route::get('/owner-bar-dashboard', 'barChart');
         Route::get('/owner-top-cs', 'topCS');
         Route::get('/owner-top-product', 'topProduk');
         Route::get('/owner-cs-performance', 'csPerformance');
