@@ -162,12 +162,12 @@ class TargetController extends Controller
             $user = User::where('parent_id', $row->parent_id)->where('status', 1)->count();
             $actual = $row->omset;
             $i = $tData ? $tData->target : 1000000000;
-            $w = $i / $user;
-            $percent = ($actual / $w) * 100;
+            // $w = $i / $user;
+            $percent = ($actual / $i) * 100;
             $hasil = number_format($percent, 2, '.', '');
 
             $data['month'][] = [
-                'target'    => $w,
+                'target'    => $i,
                 'user_id'   => $row->user_id,
                 'parent_id' => $row->parent_id,
                 'nama'      => $row->nama_depan . ' ' . $row->nama_belakang,
