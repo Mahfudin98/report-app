@@ -216,14 +216,14 @@ class TargetController extends Controller
                 $minggu = Carbon::parse($tData->periode)->weekNumberInMonth;
                 $actual = $row->omset;
                 $i = $tData ? $tData->target : 1000000000;
-                $f = round($i /  ($minggu - 1));
+                $w = $i / $user;
+                $f = round($w /  ($minggu - 1));
                 $o = round($f / 6);
-                $w = $o / $user;
-                $percent = ($actual / $w) * 100;
+                $percent = ($actual / $o) * 100;
                 $hasil = number_format($percent, 2, '.', '');
 
                 $data['day'][] = [
-                    'target'    => $w,
+                    'target'    => $o,
                     'user_id'   => $row->user_id,
                     'parent_id' => $row->parent_id,
                     'nama'      => $row->nama_depan . ' ' . $row->nama_belakang,
