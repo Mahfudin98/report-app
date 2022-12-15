@@ -185,7 +185,7 @@ class TargetController extends Controller
                 $minggu = Carbon::parse($tData->periode)->weekNumberInMonth;
                 $actual = $row->omset;
                 $i = $tData ? $tData->target : 1000000000;
-                $t = $i / $minggu;
+                $t = $i / ($minggu - 1);
                 // $w = $i / $user;
                 // $f = round($w /  ($minggu - 1));
                 $percent = ($actual / $t) * 100;
