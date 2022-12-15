@@ -145,6 +145,8 @@ class TargetController extends Controller
             ->leftJoin('transaction_products', 'transactions.id', '=', 'transaction_products.transaction_id')
             ->whereMonth('transactions.tanggal_transaksi', $month)
             ->whereYear('transactions.tanggal_transaksi', $year)
+            ->where('users.status', 1)
+            ->where('users.parent_id', '!=', null)
             ->select(
                 'transactions.user_id',
                 'users.parent_id',
