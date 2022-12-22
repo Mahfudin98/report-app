@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\Auth\ApiUsersController;
 use App\Http\Controllers\Api\Dashboard\ActivityUserController;
 use App\Http\Controllers\Api\Dashboard\DashboardIndex;
 use App\Http\Controllers\Api\Dashboard\ProfileDashboardController;
+use App\Http\Controllers\Api\Owner\Dashboard\CardController;
 use App\Http\Controllers\Api\Owner\Dashboard\DashboardController;
 use App\Http\Controllers\Api\Owner\TargetController;
 use App\Http\Controllers\Api\Transaction\ApiTransactionController;
@@ -127,5 +128,12 @@ Route::controller(TargetController::class)->group(function () {
         Route::get('/owner-target-index', 'index');
         Route::post('/owner-target-store', 'store');
         Route::get('/owner-target-persen', 'percent');
+    });
+});
+
+Route::controller(CardController::class)->group(function () {
+    Route::middleware(['auth:sanctum'])->group(function () {
+        Route::get('/owner-card-omset', 'omset');
+        Route::get('/owner-card-produk', 'produk');
     });
 });
