@@ -45,7 +45,7 @@
                                     <select class="form-select rounded-lg" aria-label="Default select example"
                                         name="status">
                                         <option value="1" {{ $user->status == 1 ? 'selected' : '' }}>Aktif</option>
-                                        <option value="0" {{ $user->status == 0 ? 'selected' : '' }}>Tidak Akti</option>
+                                        <option value="0" {{ $user->status == 0 ? 'selected' : '' }}>Tidak Aktif</option>
                                     </select>
                                 </div>
                             </div>

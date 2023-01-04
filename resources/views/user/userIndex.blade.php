@@ -19,8 +19,9 @@
             </div>
             <div class="w-full grid grid-cols-12 gap-6 mt-5 px-4">
                 @forelse ($user as $key => $row)
-                    <div class="col-span-12 md:col-span-6 lg:col-span-4">
+                    <div class="relative overflow-hidden col-span-12 md:col-span-6 lg:col-span-4">
                         <div class="box-border bg-white shadow-md shadow-black/10 rounded-md hover:scale-105">
+                            <div class="ribbon font-semibold whitespace-no-wrap px-5 text-white {{ $row->status == 1 ? 'bg-green-500 text-md' : 'bg-red-500 text-xs' }}">{{ $row->status == 1 ? "Active" : "Nonactive" }}</div>
                             <div class="flex items-start px-5 pt-3">
                                 <div class="w-full flex flex-col lg:flex-row items-center">
                                     <div class="w-16 h-16 image-fit">
@@ -49,18 +50,18 @@
                                 </div>
                             </div>
                             <div class="text-center lg:text-right px-5 py-3 border-t border-slate-200/60">
-                                <form action="{{ route('user-destroy', $row->user_id) }}" method="POST">
-                                <a href="{{ route('user-edit', $row->user_id) }}" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm py-1 px-2 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
+                                <a href="{{ route('user-edit', $row->user_id) }}" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm py-2 px-4 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
                                     <i class="fas fa-edit"></i>
                                     Edit
                                 </a>
+                                {{-- <form action="{{ route('user-destroy', $row->user_id) }}" method="POST">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm py-1 px-2 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
                                         <i class="fas fa-trash"></i>
                                         Hapus
                                     </button>
-                                </form>
+                                </form> --}}
                             </div>
                         </div>
                     </div>
