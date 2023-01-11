@@ -125,7 +125,9 @@ class ApiProductsController extends Controller
         $products = DB::table('products')->join('product_prices', 'products.id', '=', 'product_prices.product_id')->join('product_categories', 'products.category_id', '=', 'product_categories.id')
             ->select(
                 'products.*',
-                'product_prices.*',
+                'product_prices.end_user',
+                'product_prices.reseller',
+                'product_prices.agen',
                 'product_categories.category_code',
                 'product_categories.category_name',
                 'product_categories.category_type',
@@ -154,6 +156,7 @@ class ApiProductsController extends Controller
                 'category_name' => $row->category_name,
                 'category_pay' => $row->category_pay,
                 'type' => $row->category_type,
+                'time' => $row->update_at,
             ];
         }
         return response()->json(['status' => 'success', 'data' => $data, 'message' => 'Data load successfully.'], 200);
