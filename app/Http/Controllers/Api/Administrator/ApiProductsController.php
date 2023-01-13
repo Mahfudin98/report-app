@@ -93,6 +93,7 @@ class ApiProductsController extends Controller
                 'product_categories.category_pay'
             )
             ->where('product_categories.category_type', 'bpom')
+            ->where('product_categories.product_status', 1)
             ->orderBy('products.product_name', 'ASC');
             if (request()->q != '') {
                 $products = $products->where(
@@ -160,5 +161,24 @@ class ApiProductsController extends Controller
             ];
         }
         return response()->json(['status' => 'success', 'data' => $data, 'message' => 'Data load successfully.'], 200);
+    }
+
+    public function updateStock(Request $request, $code)
+    {
+        $products = Product::where('product_code', $code)->first();
+        $this->validate($request, [
+            'stock'   => 'required|integer',
+        ]);
+        try {
+            $products->update([
+                'product_stock' => $request->stock,
+            ]);
+            DB::commit();
+            return response()->json(['status' => 'success'], 200);
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json(['error' => $e->getMessage()]);
+        }
+
     }
 }
