@@ -87,4 +87,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Target::class);
     }
+
+    public function tiktokKey()
+    {
+        return $this->hasMany(TiktokKey::class);
+    }
 }

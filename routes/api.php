@@ -3,8 +3,10 @@
 use App\Http\Controllers\Api\Administrator\ApiDivisionsController;
 use App\Http\Controllers\Api\Administrator\ApiMembersController;
 use App\Http\Controllers\Api\Administrator\ApiProductsController;
+use App\Http\Controllers\Api\Administrator\LogisticController;
 use App\Http\Controllers\Api\Auth\ApiLoginController;
 use App\Http\Controllers\Api\Auth\ApiUsersController;
+use App\Http\Controllers\Api\Auth\TiktokKeyController;
 use App\Http\Controllers\Api\Dashboard\ActivityUserController;
 use App\Http\Controllers\Api\Dashboard\DashboardIndex;
 use App\Http\Controllers\Api\Dashboard\ProfileDashboardController;
@@ -138,5 +140,22 @@ Route::controller(CardController::class)->group(function () {
     Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('/owner-card-omset', 'omset');
         Route::get('/owner-card-produk', 'produk');
+    });
+});
+
+Route::controller(TiktokKeyController::class)->group(function () {
+    Route::middleware(['auth:sanctum'])->group(function () {
+        Route::get('/tiktok-get-access', 'getAccess');
+        Route::post('/tiktok-key-store', 'storeAccess');
+    });
+});
+
+Route::controller(LogisticController::class)->group(function () {
+    Route::middleware(['auth:sanctum'])->group(function () {
+        Route::get('/index-logistic', 'index');
+        Route::get('/select-category-logistic', 'selectCategory');
+        Route::post('/store-logistic', 'storeLogistic');
+        Route::post('/update-logistic/{id}', 'updateLogistic');
+        Route::post('/store-category-logistic', 'storeCategory');
     });
 });
