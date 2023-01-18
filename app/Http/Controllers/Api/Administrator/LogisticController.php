@@ -19,8 +19,14 @@ class LogisticController extends Controller
                 'logistic_categories.category_code',
                 'logistic_categories.category_name',
                 'logistic_categories.category_type',
-                'logistic_categories.keterangan',
+                // 'logistic_categories.keterangan',
             )->get();
+        return response()->json(['status' => 'success', 'data' => $logistic, 'message' => 'Data load successfully.'], 200);
+    }
+
+    public function editLogistic($id)
+    {
+        $logistic = Logistic::where('id', $id)->first();
         return response()->json(['status' => 'success', 'data' => $logistic, 'message' => 'Data load successfully.'], 200);
     }
 
@@ -85,7 +91,19 @@ class LogisticController extends Controller
     public function selectCategory()
     {
         $category = LogisticCategory::all();
-        return response()->json(['status' => 'success', 'data' => $category, 'message' => 'Data load successfully.'], 200);
+        $data = [];
+        foreach ($category as $row) {
+            $logistic = Logistic::where('logistic_category_code', $row->category_code)->get();
+            $data[] = [
+                'code'   => $row->category_code,
+                'parent' => $row->parent_category_id,
+                'nama'   => $row->category_name,
+                'type'   => $row->category_type,
+                'keterangan' => $row->keterangan,
+                'logistic'   => $logistic->count(),
+            ];
+        }
+        return response()->json(['status' => 'success', 'data' => $data, 'message' => 'Data load successfully.'], 200);
     }
 
     public function updateLogistic(Request $request, $id)

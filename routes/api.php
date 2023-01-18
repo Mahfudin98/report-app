@@ -153,6 +153,7 @@ Route::controller(TiktokKeyController::class)->group(function () {
 Route::controller(LogisticController::class)->group(function () {
     Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('/index-logistic', 'index');
+        Route::get('/edit-logistic/{id}', 'editLogistic');
         Route::get('/select-category-logistic', 'selectCategory');
         Route::post('/store-logistic', 'storeLogistic');
         Route::post('/update-logistic/{id}', 'updateLogistic');
