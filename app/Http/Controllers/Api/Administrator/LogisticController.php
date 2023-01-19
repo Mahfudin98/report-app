@@ -20,14 +20,27 @@ class LogisticController extends Controller
                 'logistic_categories.category_name',
                 'logistic_categories.category_type',
                 // 'logistic_categories.keterangan',
-            )->get();
-        return response()->json(['status' => 'success', 'data' => $logistic, 'message' => 'Data load successfully.'], 200);
+            );
+            if (request()->q != '') {
+                $logistic = $logistic->where(
+                    'nama_barang',
+                    'LIKE',
+                    '%' . request()->q . '%'
+                );
+            }
+        return response()->json(['status' => 'success', 'data' => $logistic->get(), 'message' => 'Data load successfully.'], 200);
     }
 
     public function editLogistic($id)
     {
         $logistic = Logistic::where('id', $id)->first();
         return response()->json(['status' => 'success', 'data' => $logistic, 'message' => 'Data load successfully.'], 200);
+    }
+
+    public function editCategory($code)
+    {
+        $category = LogisticCategory::where('category_code', $code)->first();
+        return response()->json(['status' => 'success', 'data' => $category, 'message' => 'Data load successfully.'], 200);
     }
 
     public function storeCategory(Request $request)
@@ -116,7 +129,23 @@ class LogisticController extends Controller
                 'stock_logistic'         => $request->stock_logistic != "" ? $request->stock_logistic : $logistic->stock_logistic,
                 'satuan'                 => $request->satuan != "" ? $request->satuan : $logistic->satuan,
                 'keterangan'             => $request->keterangan != "" ? $request->keterangan : $logistic->keterangan,
-                'status_logistic'        => $request->status != "" ? $request->status : $logistic->status_logistic,
+                'status_logistic'        => $request->status_logistic != "" ? $request->status_logistic : $logistic->status_logistic,
+            ]);
+            DB::commit();
+            return response()->json(['status' => 'success'], 200);
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json(['error' => $e->getMessage()]);
+        }
+    }
+
+    public function updateCategoryLogistic(Request $request, $code)
+    {
+        $category = LogisticCategory::where('category_code', $code)->first();
+
+        try {
+            $category->update([
+                'category_name' => $request->category_name,
             ]);
             DB::commit();
             return response()->json(['status' => 'success'], 200);

@@ -154,9 +154,11 @@ Route::controller(LogisticController::class)->group(function () {
     Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('/index-logistic', 'index');
         Route::get('/edit-logistic/{id}', 'editLogistic');
+        Route::get('/edit-category-logistic/{code}', 'editCategory');
         Route::get('/select-category-logistic', 'selectCategory');
         Route::post('/store-logistic', 'storeLogistic');
         Route::post('/update-logistic/{id}', 'updateLogistic');
         Route::post('/store-category-logistic', 'storeCategory');
+        Route::post('/update-category-logistic/{code}', "updateCategoryLogistic");
     });
 });
