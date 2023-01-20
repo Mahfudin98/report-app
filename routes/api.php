@@ -12,6 +12,7 @@ use App\Http\Controllers\Api\Dashboard\DashboardIndex;
 use App\Http\Controllers\Api\Dashboard\ProfileDashboardController;
 use App\Http\Controllers\Api\Owner\Dashboard\CardController;
 use App\Http\Controllers\Api\Owner\Dashboard\DashboardController;
+use App\Http\Controllers\Api\Owner\Dashboard\MembersDataController;
 use App\Http\Controllers\Api\Owner\TargetController;
 use App\Http\Controllers\Api\Transaction\ApiTransactionController;
 use App\Http\Controllers\Api\Transaction\RajaOngkirController;
@@ -160,5 +161,15 @@ Route::controller(LogisticController::class)->group(function () {
         Route::post('/update-logistic/{id}', 'updateLogistic');
         Route::post('/store-category-logistic', 'storeCategory');
         Route::post('/update-category-logistic/{code}', "updateCategoryLogistic");
+    });
+});
+
+Route::controller(MembersDataController::class)->group(function () {
+    Route::middleware(['auth:sanctum'])->group(function () {
+        Route::get('/owner-list-data-member', 'listMember');
+        Route::get('/owner-list-data-cs', 'listCSMember');
+        Route::get('/owner-line-data-member', 'lineChartMember');
+        Route::get('/owner-bar-data-member', 'barChartMember');
+        Route::get('/owner-performance-member', 'performanceMember');
     });
 });
