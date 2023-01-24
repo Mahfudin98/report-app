@@ -173,5 +173,6 @@ Route::controller(MembersDataController::class)->group(function () {
         Route::get('/owner-bar-data-member', 'barChartMember');
         Route::get('/owner-bar-data-member/{id}', 'barChartMemberID');
         Route::get('/owner-performance-member', 'performanceMember');
+        Route::get('/owner-member-activity/{id}', 'activityID');
     });
 });

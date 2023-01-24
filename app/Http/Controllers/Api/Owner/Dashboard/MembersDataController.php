@@ -4,8 +4,10 @@ namespace App\Http\Controllers\Api\Owner\Dashboard;
 
 use App\Http\Controllers\Controller;
 use App\Models\Member;
+use App\Models\TransactionProduct;
 use App\Models\UserDetail;
 use Carbon\Carbon;
+use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -26,13 +28,13 @@ class MembersDataController extends Controller
             ->selectRaw('count(transactions.member_id) as total')
             ->orderBy('total', 'DESC');
 
-            if (request()->q != '') {
-                $members = $members->where(
-                    'member_name',
-                    'LIKE',
-                    '%' . request()->q . '%'
-                );
-            }
+        if (request()->q != '') {
+            $members = $members->where(
+                'member_name',
+                'LIKE',
+                '%' . request()->q . '%'
+            );
+        }
         $data = [];
         foreach ($members->get() as $row) {
             $data[] = [
@@ -224,5 +226,30 @@ class MembersDataController extends Controller
             ];
         }
         return response()->json(['data' => $data], 200);
+    }
+
+    public function activityID($id)
+    {
+        $year = request()->year;
+        $month = request()->month;
+        $filter = $year . '-' . $month;
+
+        $parse = Carbon::parse($filter);
+        $array_date = range($parse->startOfMonth()->format('d'), $parse->endOfMonth()->format('d'));
+        $tr = DB::table('transactions')
+            ->where('transactions.member_id', $id)
+            ->where(DB::raw("(STR_TO_DATE(transactions.tanggal_transaksi, '%Y-%m-%d'))"), 'LIKE', '%' . $filter . '%')
+            ->get();
+        $newDates = [];
+        foreach ($tr as $row) {
+            $prod = TransactionProduct::where('transaction_id', $row->id)->get();
+            $dataTime = DateTime::createFromFormat('Y-m-d', $row->tanggal_transaksi);
+            $newDates[$dataTime->format('Y-m-d')][] = [
+                'member_id'     => $row->member_id,
+                'nomor_pesanan' => $row->nomor_pesanan,
+                'product'       => $prod,
+            ];
+        }
+        return response()->json(['status' => 'success', 'data' => $newDates, 'message' => 'Data load successfully.'], 200);
     }
 }
