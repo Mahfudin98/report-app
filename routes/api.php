@@ -169,7 +169,9 @@ Route::controller(MembersDataController::class)->group(function () {
         Route::get('/owner-list-data-member', 'listMember');
         Route::get('/owner-list-data-cs', 'listCSMember');
         Route::get('/owner-line-data-member', 'lineChartMember');
+        Route::get('/owner-line-data-member/{id}', 'lineChartMemberID');
         Route::get('/owner-bar-data-member', 'barChartMember');
+        Route::get('/owner-bar-data-member/{id}', 'barChartMemberID');
         Route::get('/owner-performance-member', 'performanceMember');
     });
 });
