@@ -31,6 +31,8 @@ class ApiMembersController extends Controller
             $data[] =[
                 'id' => $row->id,
                 'nama' => $row->member_name,
+                'username' => $row->username,
+                'password' => $row->password,
                 'alamat' => $row->member_alamat,
                 'phone' => $row->member_phone,
                 'image' => $row->image != null ? $path : 'belum ada image',

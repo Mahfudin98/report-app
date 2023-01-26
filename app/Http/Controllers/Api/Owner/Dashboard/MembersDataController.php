@@ -41,7 +41,7 @@ class MembersDataController extends Controller
                 'image_cs' => Storage::disk('public')->url('user/' . $row->image_cs),
                 'member_id' => $row->id,
                 'nama_member' => $row->member_name,
-                'image_member' => Storage::disk('public')->url('user/' . $row->image),
+                'image_member' => $row->image != null && $row->image != 'null' ? Storage::disk('public')->url('member/' . $row->image) : null,
                 'phone_member' => $row->member_phone,
                 'join_on'   => $row->join_on,
                 'alamat_member' => $row->member_alamat,
