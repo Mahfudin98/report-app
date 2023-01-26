@@ -35,6 +35,7 @@ Route::controller(RajaOngkirController::class)->group(function () {
     Route::get('/kota/{id}', 'kota')->name('kota');
     Route::get('/kecamatan/{id}', 'kecamatan')->name('kecamatan');
     Route::post('/cek-ongkir', 'cekOngkir')->name('cek-ongkir');
+    Route::get('/member-list-guest', 'memberByProvince');
 });
 
 Route::controller(ApiLoginController::class)->group(function () {
@@ -91,6 +92,7 @@ Route::controller(ApiMembersController::class)->group(function () {
         Route::post('/member-store', 'store');
         Route::get('/member-edit/{id}', 'edit');
         Route::post('/member-update/{id}', 'update');
+        Route::post('/update-table', 'updateTable');
     });
 });
 

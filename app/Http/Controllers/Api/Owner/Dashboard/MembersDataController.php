@@ -5,10 +5,8 @@ namespace App\Http\Controllers\Api\Owner\Dashboard;
 use App\Http\Controllers\Controller;
 use App\Models\Member;
 use App\Models\TransactionProduct;
-use App\Models\UserDetail;
 use Carbon\Carbon;
 use DateTime;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 

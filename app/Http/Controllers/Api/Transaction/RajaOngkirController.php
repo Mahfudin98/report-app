@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\Transaction;
 
 use App\Http\Controllers\Controller;
+use App\Models\Member;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 
@@ -75,5 +76,25 @@ class RajaOngkirController extends Controller
             'message' => 'Result Cost Ongkir',
             'data'    => $ongkir[0]['costs'][0]['cost'][0]['value']
         ]);
+    }
+
+    public function memberByProvince()
+    {
+        $members = Member::where('member_status', 1)->get();
+        $data = [];
+        foreach ($members as $row) {
+            $data[] = [
+                'member_id'     => $row->id,
+                'nama_member'   => $row->member_name,
+                'phone_member'  => $row->member_phone,
+                'alamat_member' => $row->member_alamat,
+                'province_id'   => $row->province_id,
+                'city_id'       => $row->city_id,
+                'district_id'   => $row->district_id,
+                'member_type'   => $row->member_type,
+                'member_status' => $row->member_status,
+            ];
+        }
+        return response()->json(['status' => 'success', 'data' => $data], 200);
     }
 }

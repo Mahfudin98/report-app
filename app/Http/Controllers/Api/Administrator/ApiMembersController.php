@@ -74,9 +74,13 @@ class ApiMembersController extends Controller
         try {
             $member = Member::create([
                 'user_id'       => $user->id,
+                'username'      => Str::slug($request->member_name) . mt_rand(10, 99),
                 'member_name'   => $request->member_name,
+                'email'         => $request->email,
                 'member_phone'  => $request->member_phone,
                 'member_alamat' => $request->member_alamat,
+                'province_id'   => $request->province_id,
+                'city_id'       => $request->city_id,
                 'district_id'   => $request->district_id,
                 'join_on'       => $request->join_on,
                 'image'         => $filename,
@@ -139,6 +143,21 @@ class ApiMembersController extends Controller
             ]);
             DB::commit();
             UserActivityHelper::addToLog($request->member_type != 0 ? 'Update Member Agen ' . $request->member_name : 'Update Member Reseller ' . $request->member_name);
+            return response()->json(['status' => 'success'], 200);
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json(['error' => $e->getMessage()]);
+        }
+    }
+
+    public function updateTable()
+    {
+        try {
+            $member = Member::all();
+            foreach ($member as $row) {
+                DB::table('members')->where('id', $row->id)->update(array('username' => Str::slug($row->member_name) . mt_rand(10, 99)));
+            }
+            DB::commit();
             return response()->json(['status' => 'success'], 200);
         } catch (\Exception $e) {
             DB::rollback();
