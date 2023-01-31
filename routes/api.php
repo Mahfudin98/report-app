@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\Auth\TiktokKeyController;
 use App\Http\Controllers\Api\Dashboard\ActivityUserController;
 use App\Http\Controllers\Api\Dashboard\DashboardIndex;
 use App\Http\Controllers\Api\Dashboard\ProfileDashboardController;
+use App\Http\Controllers\Api\Member\Auth\AuthMemberController;
 use App\Http\Controllers\Api\Owner\Dashboard\CardController;
 use App\Http\Controllers\Api\Owner\Dashboard\DashboardController;
 use App\Http\Controllers\Api\Owner\Dashboard\MembersDataController;
@@ -17,6 +18,7 @@ use App\Http\Controllers\Api\Owner\TargetController;
 use App\Http\Controllers\Api\Transaction\ApiTransactionController;
 use App\Http\Controllers\Api\Transaction\RajaOngkirController;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -176,5 +178,12 @@ Route::controller(MembersDataController::class)->group(function () {
         Route::get('/owner-bar-data-member/{id}', 'barChartMemberID');
         Route::get('/owner-performance-member', 'performanceMember');
         Route::get('/owner-member-activity/{id}', 'activityID');
+    });
+});
+
+Route::controller(AuthMemberController::class)->group(function () {
+    Route::post('/auth/member', 'loginMember');
+    Route::middleware(['auth:member'])->group(function () {
+        Route::get('/member-profile', 'memberProfile');
     });
 });

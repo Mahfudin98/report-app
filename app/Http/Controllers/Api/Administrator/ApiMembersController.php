@@ -157,7 +157,9 @@ class ApiMembersController extends Controller
         try {
             $member = Member::all();
             foreach ($member as $row) {
-                DB::table('members')->where('id', $row->id)->update(array('username' => Str::slug($row->member_name) . mt_rand(10, 99)));
+                DB::table('members')
+                ->where('id', $row->id)
+                ->update(array('username' => Str::slug($row->member_name) . mt_rand(10, 99), 'password' => bcrypt('password')));
             }
             DB::commit();
             return response()->json(['status' => 'success'], 200);
