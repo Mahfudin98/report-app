@@ -11,6 +11,8 @@ use App\Http\Controllers\Api\Dashboard\ActivityUserController;
 use App\Http\Controllers\Api\Dashboard\DashboardIndex;
 use App\Http\Controllers\Api\Dashboard\ProfileDashboardController;
 use App\Http\Controllers\Api\Member\Auth\AuthMemberController;
+use App\Http\Controllers\Api\Member\DashboardMemberController;
+use App\Http\Controllers\Api\Member\ProductMemberController;
 use App\Http\Controllers\Api\Owner\Dashboard\CardController;
 use App\Http\Controllers\Api\Owner\Dashboard\DashboardController;
 use App\Http\Controllers\Api\Owner\Dashboard\MembersDataController;
@@ -185,5 +187,18 @@ Route::controller(AuthMemberController::class)->group(function () {
     Route::post('/auth/member', 'loginMember');
     Route::middleware(['auth:member'])->group(function () {
         Route::get('/member-profile', 'memberProfile');
+    });
+});
+
+Route::controller(ProductMemberController::class)->group(function () {
+    Route::middleware(['auth:member'])->group(function () {
+        Route::get('/member-product', 'index');
+    });
+});
+
+Route::controller(DashboardMemberController::class)->group(function () {
+    Route::middleware(['auth:member'])->group(function () {
+        Route::get('/member-rank-list', 'list');
+        Route::get('/member-line-chart', 'lineChartMemberId');
     });
 });
