@@ -77,6 +77,7 @@ class ApiMembersController extends Controller
             $member = Member::create([
                 'user_id'       => $user->id,
                 'username'      => Str::slug($request->member_name) . mt_rand(10, 99),
+                'password'      => bcrypt('password'),
                 'member_name'   => $request->member_name,
                 'email'         => $request->email,
                 'member_phone'  => $request->member_phone,
@@ -135,8 +136,12 @@ class ApiMembersController extends Controller
 
             $member->update([
                 'member_name'   => $request->member_name,
+                'username'      => $request->username,
+                'password'      => $request->password != '' ? bcrypt($request->password) : $member->password,
                 'member_phone'  => $request->member_phone,
                 'member_alamat' => $request->member_alamat,
+                'province_id'   => $request->province_id,
+                'city_id'       => $request->city_id,
                 'district_id'   => $district,
                 'join_on'       => $request->join_on,
                 'image'         => $filename,
