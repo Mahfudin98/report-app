@@ -187,6 +187,7 @@ Route::controller(AuthMemberController::class)->group(function () {
     Route::post('/auth/member', 'loginMember');
     Route::middleware(['auth:member'])->group(function () {
         Route::get('/member-profile', 'memberProfile');
+        Route::post('/auth/member-logout', 'logoutMember');
     });
 });
 

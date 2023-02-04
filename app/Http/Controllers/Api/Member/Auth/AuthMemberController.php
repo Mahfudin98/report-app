@@ -40,4 +40,11 @@ class AuthMemberController extends Controller
         ];
         return response()->json(['status' => 'success', 'data' => $data], 200);
     }
+
+    public function logoutMember()
+    {
+        $member = request()->user();
+        $member->update(['api_token' => null]);
+        return response()->json(['status' => 'success', 'data' => $member->api_token], 200);
+    }
 }
