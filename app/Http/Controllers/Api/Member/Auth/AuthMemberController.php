@@ -34,7 +34,14 @@ class AuthMemberController extends Controller
             'username' => $member->username,
             'nama' => $member->member_name,
             'phone' => $member->member_phone,
+            'email' => $member->email,
             'image' => $member->image != null ? Storage::disk('public')->url('member/' . $member->image) : null,
+            'alamat'    => $member->member_alamat,
+
+            'provinsi' => $member->province_id ? $member->province : null,
+            'kota'  => $member->city_id ? $member->city : null,
+            'district' => $member->district_id,
+
             'member_type' => $member->member_type == 1 ? "Agen" : "Reseller",
             'member_status' => $member->member_status == 1 ? "Aktif" : "Nonaktif",
         ];
