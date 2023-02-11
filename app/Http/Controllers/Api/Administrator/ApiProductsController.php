@@ -47,6 +47,8 @@ class ApiProductsController extends Controller
                 'category_code' => $row->category_code,
                 'category' => $row->category_name,
                 'type' => $row->category_type,
+                'category_pay' => $row->category_pay,
+                'status'    => $row->product_status,
             ];
         }
         return response()->json(['status' => 'success', 'data' => $data, 'message' => 'Data load successfully.'], 200);
