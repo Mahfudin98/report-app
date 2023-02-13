@@ -84,6 +84,10 @@ Route::controller(ApiProductsController::class)->group(function () {
         Route::get('/product-category', 'category');
         Route::get('/product-select', 'selectProduct');
         Route::get('/product-list-gudang', 'listGudang');
+        Route::get('/product-activity-update/{code}', 'updateActivity');
+        Route::get('/product-edit/{code}', 'edit');
+        Route::post('/product-add', 'store');
+        Route::post('/product-update/{code}', 'update');
         Route::post('/product-stock-update/{code}', 'updateStock');
     });
     Route::get('/product-list-customer', 'listCustomer');
