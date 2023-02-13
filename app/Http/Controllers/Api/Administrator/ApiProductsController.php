@@ -157,6 +157,7 @@ class ApiProductsController extends Controller
         foreach ($category as $row) {
             $products = Product::where('category_id', $row->id)->get();
             $data[] = [
+                'id'   => $row->id,
                 'code' => $row->category_code,
                 'category' => $row->category_name,
                 'type'  => $row->category_pay,
