@@ -305,12 +305,43 @@ class ApiProductsController extends Controller
         foreach ($activity as $row) {
             $data[] = [
                 'image'    => Storage::disk('public')->url('user/'.$row->image),
-                'activity' => $row->nama_depan . ' update ' . $row->product_name,
+                'activity' => $row->nama_depan . ' update stock ' . $row->product_name,
                 'ip'       => $row->ip,
                 'browser'  => $row->browser,
                 'date'     => $row->date_time,
             ];
         }
         return response()->json(['status' => 'success', 'data' => $data, 'message' => 'Data load successfully.'], 200);
+    }
+
+    // category
+    public function storeCategory(Request $request)
+    {
+        $this->validate($request, [
+            'category_name' => 'required|string|max:100',
+            'category_type' => 'required',
+            'category_pay'  => 'required'
+        ]);
+
+        $charactersLength = strlen(strtoupper($request->category_name));
+        $randomString = '';
+        for ($i = 0; $i < 3; $i++) {
+            $randomString .= strtoupper($request->category_name)[rand(0, $charactersLength - 1)];
+        }
+        $code = $randomString. mt_rand(1000, 9999);
+
+        try {
+            ProductCategory::create([
+                'category_code' => $code,
+                'category_name' => $request->category_name,
+                'category_type' => $request->category_type,
+                'category_pay'  => $request->category_pay
+            ]);
+            DB::commit();
+            return response()->json(['status' => 'success'], 200);
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json(['error' => $e->getMessage()]);
+        }
     }
 }

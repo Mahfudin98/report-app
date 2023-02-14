@@ -89,6 +89,8 @@ Route::controller(ApiProductsController::class)->group(function () {
         Route::post('/product-add', 'store');
         Route::post('/product-update/{code}', 'update');
         Route::post('/product-stock-update/{code}', 'updateStock');
+        // category
+        Route::post('/product-category-store', 'storeCategory');
     });
     Route::get('/product-list-customer', 'listCustomer');
 });
