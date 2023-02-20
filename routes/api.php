@@ -55,8 +55,10 @@ Route::controller(ApiUsersController::class)->group(function () {
     Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('/user-list', 'index');
         Route::get('/user-show/{username}', 'show');
-        Route::get('/user-edit', 'edit');
+        Route::get('/user-edit/{username}', 'edit');
         Route::get('/user-adv', 'getAdv');
+        Route::get('/user-cs', 'getCS');
+        Route::get('/list-all-user', 'listAllUser');
         Route::post('/profile-update', 'profileUpdate');
     });
 });
@@ -186,6 +188,7 @@ Route::controller(MembersDataController::class)->group(function () {
         Route::get('/owner-bar-data-member/{id}', 'barChartMemberID');
         Route::get('/owner-performance-member', 'performanceMember');
         Route::get('/owner-member-activity/{id}', 'activityID');
+        Route::get('/owner-member-edit/{username}', 'editMember');
     });
 });
 

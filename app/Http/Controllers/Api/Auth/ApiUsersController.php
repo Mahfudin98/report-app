@@ -25,11 +25,11 @@ class ApiUsersController extends Controller
     public function index()
     {
         $users = DB::table('users')->join('user_details', 'users.id', '=', 'user_details.user_id')->join('divisions', 'users.division_id', '=', 'divisions.id')
-        ->select(
-            'users.*',
-            'user_details.*',
-            'divisions.division_code',
-            'divisions.division_name'
+            ->select(
+                'users.*',
+                'user_details.*',
+                'divisions.division_code',
+                'divisions.division_name'
             )->where('users.user_type', '!=', true)->orderBy('user_details.nama_depan', 'ASC');
         if (request()->search != null) {
             $users = $users->where('nama_depan', 'LIKE', '%' . request()->search . '%');
@@ -42,7 +42,7 @@ class ApiUsersController extends Controller
                 'nama' => $row->nama_depan . " " . $row->nama_belakang,
                 'email' => $row->email,
                 'phone' => $row->phone,
-                'image' => Storage::disk('public')->url('user/'.$row->image),
+                'image' => Storage::disk('public')->url('user/' . $row->image),
                 'division' => $row->division_name,
             ];
         }
@@ -52,11 +52,11 @@ class ApiUsersController extends Controller
     public function show($username)
     {
         $user = DB::table('users')->join('user_details', 'users.id', '=', 'user_details.user_id')->join('divisions', 'users.division_id', '=', 'divisions.id')
-        ->select(
-            'users.*',
-            'user_details.*',
-            'divisions.division_code',
-            'divisions.division_name'
+            ->select(
+                'users.*',
+                'user_details.*',
+                'divisions.division_code',
+                'divisions.division_name'
             )->where('users.username', $username)->first();
         $data = "";
         if ($user->parent_id != null) {
@@ -71,7 +71,7 @@ class ApiUsersController extends Controller
             'email' => $user->email,
             'tanggal_lahir' => $user->tanggal_lahir,
             'tanggal_masuk' => $user->tanggal_masuk,
-            'image' => Storage::disk('public')->url('user/'.$user->image),
+            'image' => Storage::disk('public')->url('user/' . $user->image),
             'gender' => $user->jenis_kelamin,
             'division' => $user->division_name,
         ];
@@ -82,11 +82,11 @@ class ApiUsersController extends Controller
     {
         $division = Division::all();
         $adv = DB::table('users')->join('user_details', 'users.id', '=', 'user_details.user_id')->join('divisions', 'users.division_id', '=', 'divisions.id')
-        ->select(
-            'users.*',
-            'user_details.*',
-            'divisions.division_code',
-            'divisions.division_name'
+            ->select(
+                'users.*',
+                'user_details.*',
+                'divisions.division_code',
+                'divisions.division_name'
             )->where('divisions.division_code', 'ADV4256')->orderBy('user_details.nama_depan', 'ASC')->get();
         return view('user.userCreate', compact('division', 'adv'));
     }
@@ -121,19 +121,22 @@ class ApiUsersController extends Controller
             'tanggal_masuk' => $request->tanggal_masuk
         ]);
 
-        UserActivityHelper::addToLog(auth()->user()->username. ' add new user');
+        UserActivityHelper::addToLog(auth()->user()->username . ' add new user');
 
         return redirect(route('user-index'))->with(['success' => 'User Baru Ditambahkan']);
     }
 
-    public function edit()
+    public function edit($username)
     {
-        $user = request()->user();
         $edit = DB::table('users')->join('user_details', 'users.id', '=', 'user_details.user_id')
-        ->select(
-            'users.email', 'users.username',
-            'user_details.*',
-            )->where('users.id', $user->id)->first();
+            ->select(
+                'users.email',
+                'users.username',
+                'users.status',
+                'users.parent_id',
+                'users.division_id',
+                'user_details.*',
+            )->where('users.username', $username)->first();
         return response()->json(['status' => 'success', 'data' => $edit, 'message' => 'Data load successfully.'], 200);
     }
 
@@ -200,7 +203,7 @@ class ApiUsersController extends Controller
         $user->delete();
         $detai->delete();
 
-        UserActivityHelper::addToLog(auth()->user()->username. ' delete user');
+        UserActivityHelper::addToLog(auth()->user()->username . ' delete user');
 
         return back();
     }
@@ -208,10 +211,11 @@ class ApiUsersController extends Controller
     public function getAdv()
     {
         $adv = DB::table('users')->join('user_details', 'users.id', '=', 'user_details.user_id')->join('divisions', 'users.division_id', '=', 'divisions.id')
-        ->select(
-            'users.id',
-            'user_details.nama_depan', 'user_details.nama_belakang',
-            'divisions.division_code'
+            ->select(
+                'users.id',
+                'user_details.nama_depan',
+                'user_details.nama_belakang',
+                'divisions.division_code'
             )->where('divisions.division_code', 'ADV4256')->orderBy('user_details.nama_depan', 'ASC')->get();
 
         return response()->json(['status' => 'success', 'data' => $adv, 'message' => 'Data load successfully.'], 200);
@@ -219,7 +223,7 @@ class ApiUsersController extends Controller
 
     public function userImage($filename)
     {
-        $path = storage_path('app/public/user/'.$filename);
+        $path = storage_path('app/public/user/' . $filename);
 
         if (!file_exists($path)) {
             abort(404);
@@ -232,5 +236,49 @@ class ApiUsersController extends Controller
         $response->header("Content-Type", $type);
 
         return $response;
+    }
+
+    public function getCS()
+    {
+        $cs = DB::table('users')->join('user_details', 'users.id', '=', 'user_details.user_id')->join('divisions', 'users.division_id', '=', 'divisions.id')
+            ->select(
+                'users.*',
+                'user_details.*',
+                'divisions.division_code',
+                'divisions.division_name'
+            )->where('divisions.division_code', 'CUS9178')->orWhere('divisions.division_code', 'CMP3651')->orWhere('divisions.division_code', 'CSL7901')->orderBy('user_details.nama_depan', 'ASC')->get();
+
+        return response()->json(['status' => 'success', 'data' => $cs, 'message' => 'Data load successfully.'], 200);
+    }
+
+    public function listAllUser()
+    {
+        $users = DB::table('users')->join('user_details', 'users.id', '=', 'user_details.user_id')->join('divisions', 'users.division_id', '=', 'divisions.id')
+            ->select(
+                'users.*',
+                'user_details.*',
+                'divisions.division_code',
+                'divisions.division_name'
+            )->where('users.user_type', '!=', true)
+            ->orderBy('users.status', 'DESC')
+            ->orderBy('user_details.nama_depan', 'ASC');
+        if (request()->search != null) {
+            $users = $users->where('nama_depan', 'LIKE', '%' . request()->search . '%');
+        }
+        $users = $users->get();
+        $data = [];
+        foreach ($users as $row) {
+            $data[] = [
+                'username' => $row->username,
+                'nama' => $row->nama_depan . " " . $row->nama_belakang,
+                'email' => $row->email,
+                'phone' => $row->phone,
+                'image' => Storage::disk('public')->url('user/' . $row->image),
+                'division' => $row->division_name,
+                'status'   => $row->status,
+            ];
+        }
+
+        return response()->json(['status' => 'success', 'data' => $data, 'message' => 'Data load successfully.'], 200);
     }
 }

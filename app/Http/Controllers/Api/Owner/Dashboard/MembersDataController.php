@@ -41,6 +41,7 @@ class MembersDataController extends Controller
                 'image_cs' => Storage::disk('public')->url('user/' . $row->image_cs),
                 'member_id' => $row->id,
                 'nama_member' => $row->member_name,
+                'username' => $row->username,
                 'image_member' => $row->image != null && $row->image != 'null' ? Storage::disk('public')->url('member/' . $row->image) : null,
                 'phone_member' => $row->member_phone,
                 'join_on'   => $row->join_on,
@@ -249,5 +250,11 @@ class MembersDataController extends Controller
             ];
         }
         return response()->json(['status' => 'success', 'data' => $newDates, 'message' => 'Data load successfully.'], 200);
+    }
+
+    public function editMember($username)
+    {
+        $member = Member::where('username', $username)->first();
+        return response()->json(['status' => 'success', 'data' => $member, 'message' => 'Data load successfully.'], 200);
     }
 }
