@@ -262,8 +262,8 @@ class ApiUsersController extends Controller
             )->where('users.user_type', '!=', true)
             ->orderBy('users.status', 'DESC')
             ->orderBy('user_details.nama_depan', 'ASC');
-        if (request()->search != null) {
-            $users = $users->where('nama_depan', 'LIKE', '%' . request()->search . '%');
+        if (request()->q != null) {
+            $users = $users->where('nama_depan', 'LIKE', '%' . request()->q . '%');
         }
         $users = $users->get();
         $data = [];
@@ -280,5 +280,46 @@ class ApiUsersController extends Controller
         }
 
         return response()->json(['status' => 'success', 'data' => $data, 'message' => 'Data load successfully.'], 200);
+    }
+
+    public function update(Request $request, $username)
+    {
+        $user = User::where('username', $username)->first();
+        $detail = UserDetail::where('user_id', $user->id)->first();
+
+        $filename = $detail->image;
+        if ($request->hasFile('image') != '') {
+            $file = $request->file('image');
+            File::delete(storage_path('app/public/user/' . $filename));
+            $filename = time() . Str::slug($request->nama_depan) . '.' . $file->getClientOriginalExtension();
+            $file->storeAs('public/user', $filename);
+        }
+
+        try {
+            $user->update([
+                'division_id'   => $request->division_id != '' ? $request->division_id : $user->division_id,
+                'parent_id'     => $request->parent_id != '' ? $request->parent_id : null,
+                'username'      => $request->username != '' ? $request->username : $user->username,
+                'email'         => $request->email != '' ? $request->email : $user->email,
+                'password'      => $request->password != '' ? Hash::make($request->password) : $user->password,
+                'status'        => $request->status != '' ? $request->status : $user->status,
+            ]);
+            $detail->update([
+                'nama_depan'     => $request->nama_depan != '' ? $request->nama_depan : $detail->nama_depan,
+                'nama_belakang'  => $request->nama_belakang != '' ? $request->nama_belakang : $detail->nama_belakang,
+                'image'          => $filename,
+                'alamat'         => $request->alamat != '' ? $request->alamat : $detail->alamat,
+                'phone'          => $request->phone != '' ? $request->phone : $detail->phone,
+                'jenis_kelamin'  => $request->jenis_kelamin != '' ? $request->jenis_kelamin : $detail->jenis_kelamin,
+                'tanggal_lahir'  => $request->tanggal_lahir != '' ? $request->tanggal_lahir : $detail->tanggal_lahir,
+                'tanggal_masuk'  => $request->tanggal_masuk != '' ? $request->tanggal_masuk : $detail->tanggal_masuk,
+                'tanggal_keluar' => $request->tanggal_keluar != '' ? $request->tanggal_keluar : null,
+            ]);
+            DB::commit();
+            return response()->json(['status' => 'success'], 200);
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json(['error' => $e->getMessage()]);
+        }
     }
 }

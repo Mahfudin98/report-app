@@ -60,6 +60,7 @@ Route::controller(ApiUsersController::class)->group(function () {
         Route::get('/user-cs', 'getCS');
         Route::get('/list-all-user', 'listAllUser');
         Route::post('/profile-update', 'profileUpdate');
+        Route::post('/user-update/{username}', 'update');
     });
 });
 
