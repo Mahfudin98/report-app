@@ -71,9 +71,11 @@ class ApiUsersController extends Controller
             'email' => $user->email,
             'tanggal_lahir' => $user->tanggal_lahir,
             'tanggal_masuk' => $user->tanggal_masuk,
+            'tanggal_keluar' => $user->tanggal_keluar,
             'image' => Storage::disk('public')->url('user/' . $user->image),
             'gender' => $user->jenis_kelamin,
             'division' => $user->division_name,
+            'status' => $user->status,
         ];
         return response()->json(['status' => 'success', 'data' => $data], 200);
     }
