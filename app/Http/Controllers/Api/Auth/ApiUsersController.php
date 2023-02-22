@@ -91,8 +91,24 @@ class ApiUsersController extends Controller
         return view('user.userCreate', compact('division', 'adv'));
     }
 
-    public function store(StoreUsersRequest $request)
+    public function store(Request $request)
     {
+        $request->validate([
+            'division_id' => 'required',
+            'parent_id'   => 'nullable',
+            'username'    => 'required|unique:users,username,except,id',
+            'email'       => 'required|unique:users,email,except,id',
+            'password'    => 'required',
+            // detail
+            'nama_depan'    => 'required',
+            'nama_belakang' => 'required',
+            'image'         => 'nullable|image|mimes:png,jpeg,jpg|max:2048',
+            'alamat'        => 'required',
+            'phone'         => 'required',
+            'jenis_kelamin' => 'required',
+            'tanggal_lahir' => 'required',
+            'tanggal_masuk' => 'required'
+        ]);
         $filename = '';
 
         if ($request->hasFile('image') != '') {
@@ -101,29 +117,32 @@ class ApiUsersController extends Controller
             $file->storeAs('public/user', $filename);
         }
 
-        $user = User::create([
-            'division_id'   => $request->division_id,
-            'parent_id'     => $request->parent_id != '' ? $request->parent_id : null,
-            'username'      => $request->username,
-            'email'         => $request->email,
-            'password'      => Hash::make($request->password),
-        ]);
+        try {
+            $user = User::create([
+                'division_id'   => $request->division_id,
+                'parent_id'     => $request->parent_id != '' ? $request->parent_id : null,
+                'username'      => $request->username,
+                'email'         => $request->email,
+                'password'      => Hash::make($request->password),
+            ]);
 
-        UserDetail::create([
-            'user_id'       => $user->id,
-            'nama_depan'    => $request->nama_depan,
-            'nama_belakang' => $request->nama_belakang,
-            'image'         => $filename != ''  ? $filename : null,
-            'alamat'        => $request->alamat,
-            'phone'         => $request->phone,
-            'jenis_kelamin' => $request->jenis_kelamin,
-            'tanggal_lahir' => $request->tanggal_lahir,
-            'tanggal_masuk' => $request->tanggal_masuk
-        ]);
-
-        UserActivityHelper::addToLog(auth()->user()->username . ' add new user');
-
-        return redirect(route('user-index'))->with(['success' => 'User Baru Ditambahkan']);
+            UserDetail::create([
+                'user_id'       => $user->id,
+                'nama_depan'    => $request->nama_depan,
+                'nama_belakang' => $request->nama_belakang,
+                'image'         => $filename != ''  ? $filename : null,
+                'alamat'        => $request->alamat,
+                'phone'         => $request->phone,
+                'jenis_kelamin' => $request->jenis_kelamin,
+                'tanggal_lahir' => $request->tanggal_lahir,
+                'tanggal_masuk' => $request->tanggal_masuk
+            ]);
+            DB::commit();
+            return response()->json(['status' => 'success'], 200);
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json(['error' => $e->getMessage()]);
+        }
     }
 
     public function edit($username)
