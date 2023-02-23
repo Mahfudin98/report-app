@@ -8,7 +8,10 @@ use App\Models\TransactionProduct;
 use Carbon\Carbon;
 use DateTime;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\File;
 
 class MembersDataController extends Controller
 {
@@ -256,5 +259,40 @@ class MembersDataController extends Controller
     {
         $member = Member::where('username', $username)->first();
         return response()->json(['status' => 'success', 'data' => $member, 'message' => 'Data load successfully.'], 200);
+    }
+
+    public function updateMember(Request $request, $username)
+    {
+        $member = Member::where('username', $username)->first();
+        $filename = $member->image;
+        if ($request->hasFile('image') != '') {
+            $file = $request->file('image');
+            File::delete(storage_path('app/public/member/' . $filename));
+            $filename = time() . Str::slug($request->member_name) . '.' . $file->getClientOriginalExtension();
+            $file->storeAs('public/member', $filename);
+        }
+        try {
+            $member->update([
+                'user_id' => $request->user_id != '' ? $request->user_id : $member->user_id,
+                'username' => $request->username != '' ? $request->username : $member->username,
+                'password' => $request->password != '' ? bcrypt($request->password) : $member->password,
+                'member_name' => $request->member_name != '' ? $request->member_name : $member->member_name,
+                'email' => $request->email != '' ? $request->email : $member->email,
+                'member_phone' => $request->member_phone != '' ? $request->member_phone : $member->member_phone,
+                'member_alamat' => $request->member_alamat != '' ? $request->member_alamat : $member->member_alamat,
+                'province_id' => $request->province_id != '' ? $request->province_id : $member->province_id,
+                'city_id' => $request->city_id != '' ? $request->city_id : $member->city_id,
+                'district_id' => $request->district_id != '' ? $request->district_id : $member->district_id,
+                'join_on' => $request->join_on != '' ? $request->join_on : $member->join_on,
+                'image' => $filename,
+                'member_type' => $request->member_type != '' ? $request->member_type : $member->member_type,
+                'member_status' => $request->member_status != '' ? $request->member_status : $member->member_status,
+            ]);
+            DB::commit();
+            return response()->json(['status' => 'success'], 200);
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json(['error' => $e->getMessage()]);
+        }
     }
 }

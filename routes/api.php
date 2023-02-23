@@ -191,6 +191,7 @@ Route::controller(MembersDataController::class)->group(function () {
         Route::get('/owner-performance-member', 'performanceMember');
         Route::get('/owner-member-activity/{id}', 'activityID');
         Route::get('/owner-member-edit/{username}', 'editMember');
+        Route::post('/owner-update-member/{username}', 'updateMember');
     });
 });
 
