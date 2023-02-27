@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\TiktokKey;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 
 class TiktokKeyController extends Controller
 {
@@ -30,5 +31,18 @@ class TiktokKeyController extends Controller
         ]);
 
         return response()->json(['status' => 'success'], 200);
+    }
+
+    public function getRequest()
+    {
+        $url = 'https://open-api.tiktokglobalshop.com';
+        $page = request()->page;
+        $app_key = request()->app_key;
+        $timestamp = request()->timestamp;
+        $sign = request()->sign;
+        $access_token = request()->access_token;
+        $response = Http::get('https://open-api.tiktokglobalshop.com/' . $page . '?app_key=' . $app_key . '&timestamp=' . $timestamp . '&sign=' . $sign . '&access_token=' . $access_token);
+        // $data = json_decode($response->body());
+        return response()->json(json_decode($response->body()), 200);
     }
 }
