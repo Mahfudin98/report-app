@@ -164,7 +164,9 @@ Route::controller(TiktokKeyController::class)->group(function () {
     Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('/tiktok-get-access', 'getAccess');
         Route::post('/tiktok-key-store', 'storeAccess');
-        Route::get('/tiktok-get-request', 'getRequest');
+        // auth
+        Route::get('/tiktok-get-auth', 'getAuth');
+        Route::get('/tiktok-get-request', 'getShop');
     });
 });
 
