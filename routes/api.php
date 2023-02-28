@@ -17,6 +17,15 @@ use App\Http\Controllers\Api\Owner\Dashboard\CardController;
 use App\Http\Controllers\Api\Owner\Dashboard\DashboardController;
 use App\Http\Controllers\Api\Owner\Dashboard\MembersDataController;
 use App\Http\Controllers\Api\Owner\TargetController;
+use App\Http\Controllers\Api\Owner\TiktokPage\TiktiokFinanceController;
+use App\Http\Controllers\Api\Owner\TiktokPage\TiktiokFulfillmentController;
+use App\Http\Controllers\Api\Owner\TiktokPage\TiktiokGlobalProductController;
+use App\Http\Controllers\Api\Owner\TiktokPage\TiktiokLogisticsController;
+use App\Http\Controllers\Api\Owner\TiktokPage\TiktiokOrderController;
+use App\Http\Controllers\Api\Owner\TiktokPage\TiktiokProductController;
+use App\Http\Controllers\Api\Owner\TiktokPage\TiktiokPromotionController;
+use App\Http\Controllers\Api\Owner\TiktokPage\TiktiokReverseController;
+use App\Http\Controllers\Api\Owner\TiktokPage\TiktiokSupplychainController;
 use App\Http\Controllers\Api\Transaction\ApiTransactionController;
 use App\Http\Controllers\Api\Transaction\RajaOngkirController;
 use Illuminate\Http\Request;
@@ -160,16 +169,6 @@ Route::controller(CardController::class)->group(function () {
     });
 });
 
-Route::controller(TiktokKeyController::class)->group(function () {
-    Route::middleware(['auth:sanctum'])->group(function () {
-        Route::get('/tiktok-get-access', 'getAccess');
-        Route::post('/tiktok-key-store', 'storeAccess');
-        // auth
-        Route::get('/tiktok-get-auth', 'getAuth');
-        Route::get('/tiktok-get-request', 'getShop');
-    });
-});
-
 Route::controller(LogisticController::class)->group(function () {
     Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('/index-logistic', 'index');
@@ -218,3 +217,106 @@ Route::controller(DashboardMemberController::class)->group(function () {
         Route::get('/member-line-chart', 'lineChartMemberId');
     });
 });
+
+// route for tiktok
+Route::controller(TiktokKeyController::class)->group(function () {
+    Route::middleware(['auth:sanctum'])->group(function () {
+        Route::get('/tiktok-get-access', 'getAccess');
+        Route::post('/tiktok-key-store', 'storeAccess');
+        // auth
+        Route::get('/tiktok-get-auth', 'getAuth');
+        Route::get('/tiktok-get-request', 'getShop');
+    });
+}); // tiktok auth
+
+Route::controller(TiktiokOrderController::class)->group(function () {
+    Route::middleware(['auth:sanctum'])->group(function () {
+        Route::get('/tiktok-order-detail', 'getOrderDetail');
+        Route::get('/tiktok-order-list', 'getOrderList');
+    });
+}); // tiktok order
+
+Route::controller(TiktiokProductController::class)->group(function () {
+    Route::middleware(['auth:sanctum'])->group(function () {
+        Route::get('/tiktok-product-upload-file', 'uploadFile');
+        Route::get('/tiktok-product-upload-image', 'uploadImage');
+        Route::get('/tiktok-product-create-product', 'createProduct');
+        Route::get('/tiktok-product-delete-product', 'deleteProduct');
+        Route::get('/tiktok-product-edit-product', 'editProduct');
+        Route::get('/tiktok-product-update-stock', 'updateStock');
+        Route::get('/tiktok-product-get-product-list', 'getProductList');
+        Route::get('/tiktok-product-get-product-detail', 'getProductDetail');
+        Route::get('/tiktok-product-deactivate-product', 'deactivateProduct');
+        Route::get('/tiktok-product-activate-product', 'activateProduct');
+        Route::get('/tiktok-product-recover-delete-product', 'recoverDeleteProduct');
+        Route::get('/tiktok-product-update-price', 'updatePrice');
+        Route::get('/tiktok-product-get-categories', 'getCategories');
+        Route::get('/tiktok-product-get-brands', 'getBrands');
+        Route::get('/tiktok-product-get-attributes', 'getAttributes');
+        Route::get('/tiktok-product-get-category-rule', 'getCategoryRule');
+        Route::get('/tiktok-product-category-recomended', 'categoryRecomended');
+        Route::get('/tiktok-product-create-draft-product', 'createDraftProduct');
+    });
+}); // tiktok product
+
+Route::controller(TiktiokFulfillmentController::class)->group(function () {
+    Route::middleware(['auth:sanctum'])->group(function () {
+        Route::get('/tiktok-fulfillment-verify-order-split', 'verifyOrderSplit');
+        Route::get('/tiktok-fulfillment-confirm-order-split', 'confirmOrderSplit');
+        Route::get('/tiktok-fulfillment-search-pre-combine-pkg', 'searchPreCombinePkg');
+        Route::get('/tiktok-fulfillment-get-package-shipping-document', 'getPakageShippingDocument');
+        Route::get('/tiktok-fulfillment-update-package-shipping-info', 'updatePackageShippingInfo');
+        Route::get('/tiktok-fulfillment-get-package-shipping-info', 'getPackageShippingInfo');
+        Route::get('/tiktok-fulfillment-search-package', 'searchPackage');
+        Route::get('/tiktok-fulfillment-ship-package', 'shipPackage');
+        Route::get('/tiktok-fulfillment-get-package-pickup-config', 'getPackagePickupConfig');
+        Route::get('/tiktok-fulfillment-remove-package-order', 'removePackageOrder');
+        Route::get('/tiktok-fulfillment-confirm-precombine-package', 'confirmPrecombinePackage');
+        Route::get('/tiktok-fulfillment-get-package-detail', 'getPackageDetail');
+        Route::get('/tiktok-fulfillment-fulfillment-upload-image', 'fulfillmentUploadImage');
+        Route::get('/tiktok-fulfillment-update-package-delivery-status', 'updatePackageDeliveryStatus');
+        Route::get('/tiktok-fulfillment-fulfillment-upload-file', 'fulfillmentUploadFile');
+        Route::get('/tiktok-fulfillment-batch-ship-package', 'batchShipPackage');
+    });
+}); // tiktok fullfillment
+
+Route::controller(TiktiokLogisticsController::class)->group(function () {
+    Route::middleware(['auth:sanctum'])->group(function () {
+        Route::get('/tiktok-logistics-get-subscribed-delivery-option', 'getSubscribedDeliveryOption');
+        Route::get('/tiktok-logistics-update-shipping-info', 'updateShippingInfo');
+        Route::get('/tiktok-logistics-get-shipping-document', 'getShippingDocument');
+        Route::get('/tiktok-logistics-get-shipping-provider', 'getShippingProvider');
+        Route::get('/tiktok-logistics-get-shipping-info', 'getShippingInfo');
+        Route::get('/tiktok-logistics-get-warehouse-list', 'getWarehouseList');
+    });
+}); // tiktok logistics
+
+Route::controller(TiktiokReverseController::class)->group(function () {
+    Route::middleware(['auth:sanctum'])->group(function () {
+        Route::get('/tiktok-reverse-reject-reverse-request', 'rejectReverseRequest');
+        Route::get('/tiktok-reverse-get-reverse-order-list', 'getReverseOrderList');
+        Route::get('/tiktok-reverse-confirm-reverse-request', 'confirmReverseRequest');
+        Route::get('/tiktok-reverse-cancle-order', 'cancleOrder');
+        Route::get('/tiktok-reverse-get-reject-reason-list', 'getRejectReasonList');
+    });
+}); // tiktok reverse
+
+Route::controller(TiktiokFinanceController::class)->group(function () {
+    Route::middleware(['auth:sanctum'])->group(function () {
+        Route::get('/tiktok-finance-get-settlements', 'getSettlements');
+        Route::get('/tiktok-finance-get-transactions', 'getTransactions');
+        Route::get('/tiktok-finance-get-order-settlements', 'getOrdersettlements');
+    });
+}); // tiktok finance
+
+Route::controller(TiktiokGlobalProductController::class)->group(function () {
+    Route::middleware(['auth:sanctum'])->group(function () {});
+}); // tiktok global product
+
+Route::controller(TiktiokPromotionController::class)->group(function () {
+    Route::middleware(['auth:sanctum'])->group(function () {});
+}); // tiktok promotion
+
+Route::controller(TiktiokSupplychainController::class)->group(function () {
+    Route::middleware(['auth:sanctum'])->group(function () {});
+}); // tiktok supplychain

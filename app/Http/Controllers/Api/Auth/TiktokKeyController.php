@@ -58,11 +58,11 @@ class TiktokKeyController extends Controller
     {
         $user = request()->user();
         $key = TiktokKey::where('user_id', $user->id)->orderBy('created_at','DESC')->first();
-        $page = request()->page;
-        $timestamp = request()->timestamp;
-        $sign = request()->sign;
         $access_token = $key->access_token;
-        $response = Http::get('https://open-api.tiktokglobalshop.com/' . $page . '?app_key=' . $this->app_key . '&timestamp=' . $timestamp . '&sign=' . $sign . '&access_token=' . $access_token);
+        $response = Http::get('https://open-api.tiktokglobalshop.com/api/shop/get_authorized_shop?'
+            . request()->getQueryString()
+            . '&access_token=' . $access_token
+        );
         return response()->json(json_decode($response->body()), 200);
     }
 }
