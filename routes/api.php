@@ -225,6 +225,7 @@ Route::controller(TiktokKeyController::class)->group(function () {
         Route::post('/tiktok-key-store', 'storeAccess');
         // auth
         Route::get('/tiktok-get-auth', 'getAuth');
+        Route::get('/tiktok-get-refresh-token', 'refreshToken');
         Route::get('/tiktok-get-request', 'getShop');
     });
 }); // tiktok auth
