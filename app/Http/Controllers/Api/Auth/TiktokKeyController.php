@@ -41,7 +41,7 @@ class TiktokKeyController extends Controller
     public function refreshToken()
     {
         $user = request()->user();
-        $key = TiktokKey::where('user_id', $user->id)->orderBy('created_at','DESC')->first();
+        $key = TiktokKey::where('user_id', $user->id)->orderBy('created_at', 'DESC')->first();
         $refresh_token = $key->refresh_token;
         $response = Http::get('https://auth.tiktok-shops.com/api/v2/token/refresh?app_key=' . $this->app_key . '&refresh_token=' . $refresh_token . '&app_secret=' . $this->app_secret . '&grant_type=refresh_token');
         $res = json_decode($response->body());
@@ -73,18 +73,55 @@ class TiktokKeyController extends Controller
         return response()->json(['status' => 'success'], 200);
     }
 
+    public function deleteToken($id)
+    {
+        $key = TiktokKey::find($id);
+        $key->delete();
+        return response()->json(['status' => 'success'], 200);
+    }
+
     public function getShop()
     {
         $user = request()->user();
-        $key = TiktokKey::where('user_id', $user->id)->orderBy('created_at','DESC')->first();
-        $access_token = "nodata_access";
-        if (isset($key->access_token)) {
-            $access_token = $key->access_token;
+        $key = TiktokKey::where('user_id', $user->id)->orderBy('created_at', 'DESC')->get();
+        $access_token = "no_data_access";
+        $seller_name = "no_data_seller";
+        $data = [];
+        if (isset($key)) {
+            foreach ($key as $row) {
+                $access_token = $row->access_token;
+                $seller_name = $row->seller_name;
+                $response = Http::get(
+                    'https://open-api.tiktokglobalshop.com/api/shop/get_authorized_shop?'
+                        . request()->getQueryString()
+                        . '&access_token=' . $access_token
+                );
+                $res = json_decode($response->body());
+                $shopId = [];
+                if (isset($res->data)) {
+                    foreach ($res->data->shop_list as $var) {
+                        $shopId = $var->shop_id;
+                    }
+                }
+                $data[] = [
+                    'id' => $row->id,
+                    'token' => $access_token,
+                    'data' => isset($res->data) ? $shopId : null,
+                    'message' => $res->message,
+                    'seller_name' => $seller_name,
+                ];
+            }
         }
-        $response = Http::get('https://open-api.tiktokglobalshop.com/api/shop/get_authorized_shop?'
-            . request()->getQueryString()
-            . '&access_token=' . $access_token
-        );
-        return response()->json(json_decode($response->body()), 200);
+
+        if ($data == []) {
+            $data[] = [
+                'token' => $access_token,
+                'data' => null,
+                'message' => "access token is invalid",
+                'seller_name' => $seller_name,
+            ];
+        }
+
+        return response()->json(['data' => $data], 200);
     }
 }

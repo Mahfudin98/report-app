@@ -16,7 +16,6 @@ class TiktiokLogisticsController extends Controller
         $access_token = $key->access_token;
         $response = Http::post('https://open-api.tiktokglobalshop.com/api/logistics/get_subscribed_deliveryoptions?'
             . request()->getQueryString()
-            . '&access_token=' . $access_token
         );
         return response()->json(json_decode($response->body()), 200);
     }
@@ -28,7 +27,6 @@ class TiktiokLogisticsController extends Controller
         $access_token = $key->access_token;
         $response = Http::post('https://open-api.tiktokglobalshop.com/api/logistics/tracking?'
             . request()->getQueryString()
-            . '&access_token=' . $access_token
         );
         return response()->json(json_decode($response->body()), 200);
     }
@@ -40,7 +38,6 @@ class TiktiokLogisticsController extends Controller
         $access_token = $key->access_token;
         $response = Http::get('https://open-api.tiktokglobalshop.com/api/logistics/shipping_document?'
             . request()->getQueryString()
-            . '&access_token=' . $access_token
         );
         return response()->json(json_decode($response->body()), 200);
     }
@@ -52,7 +49,6 @@ class TiktiokLogisticsController extends Controller
         $access_token = $key->access_token;
         $response = Http::get('https://open-api.tiktokglobalshop.com/api/logistics/shipping_providers?'
             . request()->getQueryString()
-            . '&access_token=' . $access_token
         );
         return response()->json(json_decode($response->body()), 200);
     }
@@ -64,7 +60,6 @@ class TiktiokLogisticsController extends Controller
         $access_token = $key->access_token;
         $response = Http::get('https://open-api.tiktokglobalshop.com/api/logistics/ship/get?'
             . request()->getQueryString()
-            . '&access_token=' . $access_token
         );
         return response()->json(json_decode($response->body()), 200);
     }
@@ -76,7 +71,6 @@ class TiktiokLogisticsController extends Controller
         $access_token = $key->access_token;
         $response = Http::get('https://open-api.tiktokglobalshop.com/api/logistics/get_warehouse_list?'
             . request()->getQueryString()
-            . '&access_token=' . $access_token
         );
         return response()->json(json_decode($response->body()), 200);
     }

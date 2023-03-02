@@ -16,7 +16,6 @@ class TiktiokProductController extends Controller
         $access_token = $key->access_token;
         $response = Http::post('https://open-api.tiktokglobalshop.com/api/products/upload_files?'
             . request()->getQueryString()
-            . '&access_token=' . $access_token
         );
         return response()->json(json_decode($response->body()), 200);
     }
@@ -28,7 +27,6 @@ class TiktiokProductController extends Controller
         $access_token = $key->access_token;
         $response = Http::post('https://open-api.tiktokglobalshop.com/api/products/upload_imgs?'
             . request()->getQueryString()
-            . '&access_token=' . $access_token
         );
         return response()->json(json_decode($response->body()), 200);
     }
@@ -40,7 +38,6 @@ class TiktiokProductController extends Controller
         $access_token = $key->access_token;
         $response = Http::post('https://open-api.tiktokglobalshop.com/api/products?'
             . request()->getQueryString()
-            . '&access_token=' . $access_token
         );
         return response()->json(json_decode($response->body()), 200);
     }
@@ -52,7 +49,6 @@ class TiktiokProductController extends Controller
         $access_token = $key->access_token;
         $response = Http::delete('https://open-api.tiktokglobalshop.com/api/products?'
             . request()->getQueryString()
-            . '&access_token=' . $access_token
         );
         return response()->json(json_decode($response->body()), 200);
     }
@@ -64,7 +60,6 @@ class TiktiokProductController extends Controller
         $access_token = $key->access_token;
         $response = Http::put('https://open-api.tiktokglobalshop.com/api/products?'
             . request()->getQueryString()
-            . '&access_token=' . $access_token
         );
         return response()->json(json_decode($response->body()), 200);
     }
@@ -76,7 +71,6 @@ class TiktiokProductController extends Controller
         $access_token = $key->access_token;
         $response = Http::put('https://open-api.tiktokglobalshop.com/api/products/stocks?'
             . request()->getQueryString()
-            . '&access_token=' . $access_token
         );
         return response()->json(json_decode($response->body()), 200);
     }
@@ -88,7 +82,6 @@ class TiktiokProductController extends Controller
         $access_token = $key->access_token;
         $response = Http::post('https://open-api.tiktokglobalshop.com/api/products/search?'
             . request()->getQueryString()
-            . '&access_token=' . $access_token
         );
         return response()->json(json_decode($response->body())->data, 200);
     }
@@ -100,7 +93,6 @@ class TiktiokProductController extends Controller
         $access_token = $key->access_token;
         $response = Http::get('https://open-api.tiktokglobalshop.com/api/products/details?'
             . request()->getQueryString()
-            . '&access_token=' . $access_token
         );
         return response()->json(json_decode($response->body()), 200);
     }
@@ -112,7 +104,6 @@ class TiktiokProductController extends Controller
         $access_token = $key->access_token;
         $response = Http::post('https://open-api.tiktokglobalshop.com/api/products/inactivated_products?'
             . request()->getQueryString()
-            . '&access_token=' . $access_token
         );
         return response()->json(json_decode($response->body()), 200);
     }
@@ -124,7 +115,6 @@ class TiktiokProductController extends Controller
         $access_token = $key->access_token;
         $response = Http::post('https://open-api.tiktokglobalshop.com/api/products/activate?'
             . request()->getQueryString()
-            . '&access_token=' . $access_token
         );
         return response()->json(json_decode($response->body()), 200);
     }
@@ -136,7 +126,6 @@ class TiktiokProductController extends Controller
         $access_token = $key->access_token;
         $response = Http::post('https://open-api.tiktokglobalshop.com/api/products/recover?'
             . request()->getQueryString()
-            . '&access_token=' . $access_token
         );
         return response()->json(json_decode($response->body()), 200);
     }
@@ -148,7 +137,6 @@ class TiktiokProductController extends Controller
         $access_token = $key->access_token;
         $response = Http::put('https://open-api.tiktokglobalshop.com/api/products/prices?'
             . request()->getQueryString()
-            . '&access_token=' . $access_token
         );
         return response()->json(json_decode($response->body()), 200);
     }
@@ -160,7 +148,6 @@ class TiktiokProductController extends Controller
         $access_token = $key->access_token;
         $response = Http::get('https://open-api.tiktokglobalshop.com/api/products/categories?'
             . request()->getQueryString()
-            . '&access_token=' . $access_token
         );
         return response()->json(json_decode($response->body()), 200);
     }
@@ -172,7 +159,6 @@ class TiktiokProductController extends Controller
         $access_token = $key->access_token;
         $response = Http::get('https://open-api.tiktokglobalshop.com/api/products/brands?'
             . request()->getQueryString()
-            . '&access_token=' . $access_token
         );
         return response()->json(json_decode($response->body()), 200);
     }
@@ -184,7 +170,6 @@ class TiktiokProductController extends Controller
         $access_token = $key->access_token;
         $response = Http::get('https://open-api.tiktokglobalshop.com/api/products/attributes?'
             . request()->getQueryString()
-            . '&access_token=' . $access_token
         );
         return response()->json(json_decode($response->body()), 200);
     }
@@ -196,7 +181,6 @@ class TiktiokProductController extends Controller
         $access_token = $key->access_token;
         $response = Http::get('https://open-api.tiktokglobalshop.com/api/products/categories/rules?'
             . request()->getQueryString()
-            . '&access_token=' . $access_token
         );
         return response()->json(json_decode($response->body()), 200);
     }
@@ -208,7 +192,6 @@ class TiktiokProductController extends Controller
         $access_token = $key->access_token;
         $response = Http::post('https://open-api.tiktokglobalshop.com/api/product/category_recommend?'
             . request()->getQueryString()
-            . '&access_token=' . $access_token
         );
         return response()->json(json_decode($response->body()), 200);
     }
@@ -220,7 +203,6 @@ class TiktiokProductController extends Controller
         $access_token = $key->access_token;
         $response = Http::post('https://open-api.tiktokglobalshop.com/api/products/save_draft?'
             . request()->getQueryString()
-            . '&access_token=' . $access_token
         );
         return response()->json(json_decode($response->body()), 200);
     }

@@ -223,6 +223,7 @@ Route::controller(TiktokKeyController::class)->group(function () {
     Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('/tiktok-get-access', 'getAccess');
         Route::post('/tiktok-key-store', 'storeAccess');
+        Route::delete('/tiktok-key-delete/{id}', 'deleteToken');
         // auth
         Route::get('/tiktok-get-auth', 'getAuth');
         Route::get('/tiktok-get-refresh-token', 'refreshToken');

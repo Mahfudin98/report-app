@@ -16,7 +16,6 @@ class TiktiokReverseController extends Controller
         $access_token = $key->access_token;
         $response = Http::post('https://open-api.tiktokglobalshop.com/api/reverse/reverse_request/reject?'
             . request()->getQueryString()
-            . '&access_token=' . $access_token
         );
         return response()->json(json_decode($response->body()), 200);
     }
@@ -28,7 +27,6 @@ class TiktiokReverseController extends Controller
         $access_token = $key->access_token;
         $response = Http::post('https://open-api.tiktokglobalshop.com/api/reverse/reverse_order/list?'
             . request()->getQueryString()
-            . '&access_token=' . $access_token
         );
         return response()->json(json_decode($response->body()), 200);
     }
@@ -40,7 +38,6 @@ class TiktiokReverseController extends Controller
         $access_token = $key->access_token;
         $response = Http::post('https://open-api.tiktokglobalshop.com/api/reverse/reverse_request/confirm?'
             . request()->getQueryString()
-            . '&access_token=' . $access_token
         );
         return response()->json(json_decode($response->body()), 200);
     }
@@ -52,7 +49,6 @@ class TiktiokReverseController extends Controller
         $access_token = $key->access_token;
         $response = Http::post('https://open-api.tiktokglobalshop.com/api/reverse/order/cancel?'
             . request()->getQueryString()
-            . '&access_token=' . $access_token
         );
         return response()->json(json_decode($response->body()), 200);
     }
@@ -64,7 +60,6 @@ class TiktiokReverseController extends Controller
         $access_token = $key->access_token;
         $response = Http::get('https://open-api.tiktokglobalshop.com/api/reverse/reverse_reason/list?'
             . request()->getQueryString()
-            . '&access_token=' . $access_token
         );
         return response()->json(json_decode($response->body()), 200);
     }
