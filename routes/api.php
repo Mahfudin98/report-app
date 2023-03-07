@@ -16,6 +16,7 @@ use App\Http\Controllers\Api\Member\ProductMemberController;
 use App\Http\Controllers\Api\Owner\Dashboard\CardController;
 use App\Http\Controllers\Api\Owner\Dashboard\DashboardController;
 use App\Http\Controllers\Api\Owner\Dashboard\MembersDataController;
+use App\Http\Controllers\Api\Owner\Dashboard\TiktokDashboardController;
 use App\Http\Controllers\Api\Owner\TargetController;
 use App\Http\Controllers\Api\Owner\TiktokPage\TiktiokFinanceController;
 use App\Http\Controllers\Api\Owner\TiktokPage\TiktiokFulfillmentController;
@@ -237,6 +238,12 @@ Route::controller(TiktiokOrderController::class)->group(function () {
         Route::get('/tiktok-order-list', 'getOrderList');
     });
 }); // tiktok order
+
+Route::controller(TiktokDashboardController::class)->group(function () {
+    Route::middleware(['auth:sanctum'])->group(function () {
+        Route::get('/tiktok-line-penghasilan', 'linePenghasilan');
+    });
+});
 
 Route::controller(TiktiokProductController::class)->group(function () {
     Route::middleware(['auth:sanctum'])->group(function () {
