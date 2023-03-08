@@ -66,9 +66,6 @@ class TiktiokLogisticsController extends Controller
 
     public function getWarehouseList()
     {
-        $user = request()->user();
-        $key = TiktokKey::where('user_id', $user->id)->orderBy('created_at','DESC')->first();
-        $access_token = $key->access_token;
         $response = Http::get('https://open-api.tiktokglobalshop.com/api/logistics/get_warehouse_list?'
             . request()->getQueryString()
         );

@@ -242,6 +242,10 @@ Route::controller(TiktiokOrderController::class)->group(function () {
 Route::controller(TiktokDashboardController::class)->group(function () {
     Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('/tiktok-line-penghasilan', 'linePenghasilan');
+        Route::get('/tiktok-line-penjualan', 'linePenjualan');
+        Route::get('/tiktok-top-penghasilan', 'topPenghasilan');
+        Route::get('/tiktok-top-penjualan', 'topPenjualan');
+        // Route::get('/orders/detail/query', 'topPenjualan');
     });
 });
 
@@ -319,7 +323,9 @@ Route::controller(TiktiokFinanceController::class)->group(function () {
 }); // tiktok finance
 
 Route::controller(TiktiokGlobalProductController::class)->group(function () {
-    Route::middleware(['auth:sanctum'])->group(function () {});
+    Route::middleware(['auth:sanctum'])->group(function () {
+        Route::get('/product/global_products/search', 'getGlobalProduct');
+    });
 }); // tiktok global product
 
 Route::controller(TiktiokPromotionController::class)->group(function () {
