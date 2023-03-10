@@ -38,23 +38,28 @@ class TiktokKeyController extends Controller
         return response()->json(json_decode($response->body()), 200);
     }
 
-    public function refreshToken()
+    public function refreshToken($token)
     {
         $user = request()->user();
-        $key = TiktokKey::where('user_id', $user->id)->orderBy('created_at', 'DESC')->first();
+        $key = TiktokKey::where('access_token', $token)->first();
         $refresh_token = $key->refresh_token;
         $response = Http::get('https://auth.tiktok-shops.com/api/v2/token/refresh?app_key=' . $this->app_key . '&refresh_token=' . $refresh_token . '&app_secret=' . $this->app_secret . '&grant_type=refresh_token');
         $res = json_decode($response->body());
-        $data = $res->data;
-        $key = TiktokKey::create([
-            'user_id' => $user->id,
-            'access_token' => $data->access_token,
-            'access_token_expire_in' => $data->access_token_expire_in,
-            'refresh_token' => $data->refresh_token,
-            'refresh_token_expire_in' => $data->refresh_token_expire_in,
-            'open_id' => $data->open_id,
-            'seller_name' => $data->seller_name,
-        ]);
+        if ($res->message == "success") {
+            $data = $res->data;
+            $key = TiktokKey::create([
+                'user_id' => $user->id,
+                'access_token' => $data->access_token,
+                'access_token_expire_in' => $data->access_token_expire_in,
+                'refresh_token' => $data->refresh_token,
+                'refresh_token_expire_in' => $data->refresh_token_expire_in,
+                'open_id' => $data->open_id,
+                'seller_name' => $data->seller_name,
+            ]);
+            return response()->json(['status' => 'success'], 200);
+        } else {
+            return response()->json(['status' => $res->message], 200);
+        }
     }
 
     public function storeAccess(Request $request)

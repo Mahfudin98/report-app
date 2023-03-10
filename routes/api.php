@@ -227,7 +227,7 @@ Route::controller(TiktokKeyController::class)->group(function () {
         Route::delete('/tiktok-key-delete/{id}', 'deleteToken');
         // auth
         Route::get('/tiktok-get-auth', 'getAuth');
-        Route::get('/tiktok-get-refresh-token', 'refreshToken');
+        Route::post('/tiktok-get-refresh-token/{token}', 'refreshToken');
         Route::get('/tiktok-get-request', 'getShop');
     });
 }); // tiktok auth
@@ -236,6 +236,7 @@ Route::controller(TiktiokOrderController::class)->group(function () {
     Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('/tiktok-order-detail', 'getOrderDetail');
         Route::get('/tiktok-order-list', 'getOrderList');
+        // Route::get('/orders/detail/query', 'getOrderDetail');
     });
 }); // tiktok order
 
@@ -316,8 +317,8 @@ Route::controller(TiktiokReverseController::class)->group(function () {
 
 Route::controller(TiktiokFinanceController::class)->group(function () {
     Route::middleware(['auth:sanctum'])->group(function () {
-        Route::get('/tiktok-finance-get-settlements', 'getSettlements');
-        Route::get('/tiktok-finance-get-transactions', 'getTransactions');
+        Route::get('/finance/settlements/search', 'getSettlements');
+        Route::get('/finance/transactions/search', 'getTransactions');
         Route::get('/tiktok-finance-get-order-settlements', 'getOrdersettlements');
     });
 }); // tiktok finance
