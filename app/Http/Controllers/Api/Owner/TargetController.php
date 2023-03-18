@@ -64,8 +64,8 @@ class TargetController extends Controller
             $user = User::where('parent_id', $row->user_id)->where('status', 1)->count();
             $actual = $tr->sum('total');
             $i = $row->target;
-            $w = $i / $user;
-            $percent = ($actual / $w) * 100;
+            // $w = $i / $user;
+            $percent = ($actual / $i) * 100;
             $hasil = number_format($percent, 2, '.', '');
 
             $status = "";
@@ -88,6 +88,7 @@ class TargetController extends Controller
             }
 
             $data[] = [
+                'id'      => $row->id,
                 'nama'    => $row->nama_depan . ' ' . $row->nama_belakang,
                 'periode' => $row->periode,
                 'target'  => $row->target,
@@ -237,5 +238,12 @@ class TargetController extends Controller
         }
 
         return response()->json(['status' => 'success', 'data' => $data], 200);
+    }
+
+    public function destroyTarget($id)
+    {
+        $target = Target::find($id);
+        $target->delete();
+        return response()->json(['status' => 'success'], 200);
     }
 }

@@ -160,6 +160,7 @@ Route::controller(TargetController::class)->group(function () {
         Route::get('/owner-target-index', 'index');
         Route::post('/owner-target-store', 'store');
         Route::get('/owner-target-persen', 'percent');
+        Route::delete('/owner-target-delete/{id}', 'destroyTarget');
     });
 });
 
@@ -271,6 +272,8 @@ Route::controller(TiktiokProductController::class)->group(function () {
         Route::get('/tiktok-product-get-category-rule', 'getCategoryRule');
         Route::get('/tiktok-product-category-recomended', 'categoryRecomended');
         Route::get('/tiktok-product-create-draft-product', 'createDraftProduct');
+        // testing
+        Route::get('/products/details', 'getProductDetail');
     });
 }); // tiktok product
 
