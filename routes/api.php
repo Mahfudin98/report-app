@@ -248,7 +248,7 @@ Route::controller(TiktokDashboardController::class)->group(function () {
         Route::get('/tiktok-line-penjualan', 'linePenjualan');
         Route::get('/tiktok-top-penghasilan', 'topPenghasilan');
         Route::get('/tiktok-top-penjualan', 'topPenjualan');
-        // Route::get('/orders/detail/query', 'topPenjualan');
+        Route::get('/orders/detail/query', 'topPenjualan');
     });
 });
 
