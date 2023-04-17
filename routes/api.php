@@ -50,6 +50,7 @@ Route::controller(RajaOngkirController::class)->group(function () {
     Route::get('/kecamatan/{id}', 'kecamatan')->name('kecamatan');
     Route::post('/cek-ongkir', 'cekOngkir')->name('cek-ongkir');
     Route::get('/member-list-guest', 'memberByProvince');
+    Route::get('/member-list/{id}', 'getMemberByIdProv');
 });
 
 Route::controller(ApiLoginController::class)->group(function () {

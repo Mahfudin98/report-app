@@ -97,4 +97,24 @@ class RajaOngkirController extends Controller
         }
         return response()->json(['status' => 'success', 'data' => $data], 200);
     }
+
+    public function getMemberByIdProv($id)
+    {
+        $members = Member::where('member_status', 1)->where('province_id', $id)->get();
+        $data = [];
+        foreach ($members as $row) {
+            $data[] = [
+                'member_id'     => $row->id,
+                'nama_member'   => $row->member_name,
+                'phone_member'  => $row->member_phone,
+                'alamat_member' => $row->member_alamat,
+                'province_id'   => $row->province_id,
+                'city_id'       => $row->city_id,
+                'district_id'   => $row->district_id,
+                'member_type'   => $row->member_type,
+                'member_status' => $row->member_status,
+            ];
+        }
+        return response()->json(['status' => 'success', 'data' => $data], 200);
+    }
 }
