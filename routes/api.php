@@ -141,6 +141,7 @@ Route::controller(DashboardIndex::class)->group(function () {
         Route::get('/top-product', 'topProduk');
         Route::get('/card-status', 'cardStatus');
     });
+    Route::get('/top-product-customer', 'topProdukCustomer');
 });
 
 Route::controller(DashboardController::class)->group(function () {

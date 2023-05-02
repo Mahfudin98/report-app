@@ -170,4 +170,44 @@ class DashboardIndex extends Controller
         }
         return response()->json($this->paginate($data), 200);
     }
+
+    public function topProdukCustomer()
+    {
+        $pr = DB::table('products')
+            ->leftJoin('transaction_products', 'products.id', '=', 'transaction_products.product_id')
+            ->join('product_prices', 'products.id', '=', 'product_prices.product_id')
+            ->join('product_categories', 'products.category_id', '=', 'product_categories.id')
+            ->select(
+                'transaction_products.*',
+                'products.*',
+                'product_prices.*',
+                'product_categories.category_code',
+                'product_categories.category_name',
+                'product_categories.category_type',
+                'product_categories.category_pay'
+            )
+            ->where('product_categories.category_pay', 'paket komplit')
+            ->groupBy('products.id')
+            ->selectRaw('transaction_products.qty, sum(qty) as total')
+            ->orderBy('total', 'DESC')
+            ->get();
+        $data = [];
+        foreach ($pr as $row) {
+            $path = Storage::disk('public')->url('product/' . $row->image);
+            $data[] = [
+                'code_produk' => $row->product_code,
+                'nama_produk' => $row->product_name,
+                'stock' => $row->product_stock,
+                'image' => $row->image != null ? $path : 'belum ada image',
+                'harga_agen' => $row->agen,
+                'harga_reseller' => $row->reseller,
+                'harga_end_user' => $row->end_user,
+                'category_name' => $row->category_name,
+                'category_pay' => $row->category_pay,
+                'type' => $row->category_type,
+                'terjual' => $row->total != null ? $row->total : 0
+            ];
+        }
+        return response()->json($data, 200);
+    }
 }
