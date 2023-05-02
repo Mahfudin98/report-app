@@ -30,16 +30,16 @@ class ApiProductsController extends Controller
                 'product_categories.category_type',
                 'product_categories.category_pay'
             )->orderBy('products.product_name', 'ASC');
-            if (request()->q != '') {
-                $products = $products->where(
-                    'products.product_name',
-                    'LIKE',
-                    '%' . request()->q . '%'
-                );
-            }
+        if (request()->q != '') {
+            $products = $products->where(
+                'products.product_name',
+                'LIKE',
+                '%' . request()->q . '%'
+            );
+        }
         $data = [];
         foreach ($products->get() as $row) {
-            $path = Storage::disk('public')->url('product/'.$row->image);
+            $path = Storage::disk('public')->url('product/' . $row->image);
             $data[] = [
                 'code_produk' => $row->product_code,
                 'nama_produk' => $row->product_name,
@@ -73,7 +73,7 @@ class ApiProductsController extends Controller
         for ($i = 0; $i < 3; $i++) {
             $randomString .= strtoupper($request->product_name)[rand(0, $charactersLength - 1)];
         }
-        $code = $randomString. mt_rand(1000, 9999);
+        $code = $randomString . mt_rand(1000, 9999);
 
         try {
             $product = Product::create([
@@ -98,20 +98,19 @@ class ApiProductsController extends Controller
             DB::rollback();
             return response()->json(['error' => $e->getMessage()]);
         }
-
     }
 
     public function edit($code)
     {
         $product = Product::where('product_code', $code)->join('product_prices', 'products.id', '=', 'product_prices.product_id')->join('product_categories', 'products.category_id', '=', 'product_categories.id')
-        ->select(
-            'products.*',
-            'product_prices.*',
-            'product_categories.category_code',
-            'product_categories.category_name',
-            'product_categories.category_type',
-            'product_categories.category_pay'
-        )->first();
+            ->select(
+                'products.*',
+                'product_prices.*',
+                'product_categories.category_code',
+                'product_categories.category_name',
+                'product_categories.category_type',
+                'product_categories.category_pay'
+            )->first();
         return response()->json(['status' => 'success', 'data' => $product, 'message' => 'Data load successfully.'], 200);
     }
 
@@ -193,18 +192,18 @@ class ApiProductsController extends Controller
                 'product_categories.category_pay'
             )
             ->where('product_categories.category_type', 'bpom')
-            ->where('product_categories.product_status', 1)
+            ->where('products.product_status', 1)
             ->orderBy('products.product_name', 'ASC');
-            if (request()->q != '') {
-                $products = $products->where(
-                    'products.product_name',
-                    'LIKE',
-                    '%' . request()->q . '%'
-                );
-            }
+        if (request()->q != '') {
+            $products = $products->where(
+                'products.product_name',
+                'LIKE',
+                '%' . request()->q . '%'
+            );
+        }
         $data = [];
         foreach ($products->get() as $row) {
-            $path = Storage::disk('public')->url('product/'.$row->image);
+            $path = Storage::disk('public')->url('product/' . $row->image);
             $data[] = [
                 'code_produk' => $row->product_code,
                 'nama_produk' => $row->product_name,
@@ -236,16 +235,16 @@ class ApiProductsController extends Controller
             )
             ->where('product_categories.category_pay', 'ecer')
             ->orderBy('products.product_name', 'ASC');
-            if (request()->q != '') {
-                $products = $products->where(
-                    'products.product_name',
-                    'LIKE',
-                    '%' . request()->q . '%'
-                );
-            }
+        if (request()->q != '') {
+            $products = $products->where(
+                'products.product_name',
+                'LIKE',
+                '%' . request()->q . '%'
+            );
+        }
         $data = [];
         foreach ($products->get() as $row) {
-            $path = Storage::disk('public')->url('product/'.$row->image);
+            $path = Storage::disk('public')->url('product/' . $row->image);
             $data[] = [
                 'code_produk' => $row->product_code,
                 'nama_produk' => $row->product_name,
@@ -281,7 +280,6 @@ class ApiProductsController extends Controller
             DB::rollback();
             return response()->json(['error' => $e->getMessage()]);
         }
-
     }
 
     public function updateActivity($code)
@@ -304,7 +302,7 @@ class ApiProductsController extends Controller
         $data = [];
         foreach ($activity as $row) {
             $data[] = [
-                'image'    => Storage::disk('public')->url('user/'.$row->image),
+                'image'    => Storage::disk('public')->url('user/' . $row->image),
                 'activity' => $row->nama_depan . ' update stock ' . $row->product_name,
                 'ip'       => $row->ip,
                 'browser'  => $row->browser,
@@ -328,7 +326,7 @@ class ApiProductsController extends Controller
         for ($i = 0; $i < 3; $i++) {
             $randomString .= strtoupper($request->category_name)[rand(0, $charactersLength - 1)];
         }
-        $code = $randomString. mt_rand(1000, 9999);
+        $code = $randomString . mt_rand(1000, 9999);
 
         try {
             ProductCategory::create([
