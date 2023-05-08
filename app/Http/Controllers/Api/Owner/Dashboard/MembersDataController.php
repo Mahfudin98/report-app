@@ -318,10 +318,11 @@ class MembersDataController extends Controller
 
         $data = [];
         foreach ($member as $row) {
+            $image = Storage::disk('public')->url('member/' . $row->image);
             $data[] = [
                 'member_name' => $row->member_name,
                 'member_alamat' => $row->member_alamat,
-                'image' => Storage::disk('public')->url('member/' . $row->image),
+                'image' => $row->image != null ? $image : null,
                 'member_type' => 'Agen',
                 'date' => $row->tanggal_transaksi,
                 'total' => $row->total
