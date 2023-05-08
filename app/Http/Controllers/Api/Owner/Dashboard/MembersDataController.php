@@ -314,7 +314,9 @@ class MembersDataController extends Controller
                 'transaction_products.*'
             )
             ->groupBy('transactions.member_id')
-            ->selectRaw('transaction_products.*, sum(jumlah_harga) as total')->get();
+            ->selectRaw('transaction_products.*, sum(jumlah_harga) as total')
+            ->orderBy('total', 'DESC')
+            ->get();
 
         $data = [];
         foreach ($member as $row) {
