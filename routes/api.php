@@ -199,6 +199,8 @@ Route::controller(MembersDataController::class)->group(function () {
         Route::get('/owner-member-edit/{username}', 'editMember');
         Route::post('/owner-update-member/{username}', 'updateMember');
     });
+
+    Route::get('/top-agen', 'memberTop');
 });
 
 Route::controller(AuthMemberController::class)->group(function () {

@@ -295,4 +295,39 @@ class MembersDataController extends Controller
             return response()->json(['error' => $e->getMessage()]);
         }
     }
+
+    public function memberTop()
+    {
+        $year = request()->year;
+        $month = request()->month;
+        $filter = $year . '-' . $month;
+        $member = DB::table('transactions')
+            ->join('transaction_products', 'transactions.id', '=', 'transaction_products.transaction_id')
+            ->rightJoin('members', 'transactions.member_id', '=', 'members.id')
+            ->where('transactions.type_customer', 1)
+            ->where('transactions.tanggal_transaksi', 'LIKE', '%' . $filter . '%')
+            ->select(
+                'members.member_name',
+                'members.member_alamat',
+                'members.image',
+                'transactions.tanggal_transaksi',
+                'transaction_products.*'
+            )
+            ->groupBy('transactions.member_id')
+            ->selectRaw('transaction_products.*, sum(jumlah_harga) as total')->get();
+
+        $data = [];
+        foreach ($member as $row) {
+            $data[] = [
+                'member_name' => $row->member_name,
+                'member_alamat' => $row->member_alamat,
+                'image' => Storage::disk('public')->url('member/' . $row->image),
+                'member_type' => 'Agen',
+                'date' => $row->tanggal_transaksi,
+                'total' => $row->total
+            ];
+        }
+
+        return response()->json(['data' => $data], 200);
+    }
 }
