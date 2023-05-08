@@ -322,7 +322,7 @@ class MembersDataController extends Controller
             $data[] = [
                 'member_name' => $row->member_name,
                 'member_alamat' => $row->member_alamat,
-                'image' => $row->image != null ? $image : null,
+                'image' => $row->image != null ? $image : 'https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=334&q=80',
                 'member_type' => 'Agen',
                 'date' => $row->tanggal_transaksi,
                 'total' => $row->total
