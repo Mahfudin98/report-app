@@ -12,9 +12,28 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Http;
 
 class MembersDataController extends Controller
 {
+    protected $API_KEY = '12702fd83b0deca04b259899de0a9409';
+
+    public function getAddress($district, $city)
+    {
+
+        $district = Http::withHeaders([
+            'key' => $this->API_KEY
+        ])->get('https://pro.rajaongkir.com/api/subdistrict?id=' . $district . '&city=' . $city);
+        $district_res = $district['rajaongkir']['results'];
+        $adress = [
+            'provinsi' => $district_res['province'],
+            'city' => $district_res['city'],
+            'district' => $district_res['subdistrict_name']
+        ];
+
+        return $adress;
+    }
+
     public function listMember()
     {
         $members = DB::table('members')
@@ -295,7 +314,6 @@ class MembersDataController extends Controller
             return response()->json(['error' => $e->getMessage()]);
         }
     }
-
     public function memberTop()
     {
         $year = request()->year;
@@ -310,20 +328,24 @@ class MembersDataController extends Controller
                 'members.member_name',
                 'members.member_alamat',
                 'members.image',
+                'members.city_id',
+                'members.district_id',
                 'transactions.tanggal_transaksi',
                 'transaction_products.*'
             )
             ->groupBy('transactions.member_id')
             ->selectRaw('transaction_products.*, sum(jumlah_harga) as total')
             ->orderBy('total', 'DESC')
-            ->get();
+            ->take(3)->get();
 
         $data = [];
         foreach ($member as $row) {
+
+            $adress = $this->getAddress($row->district_id, $row->city_id);
             $image = Storage::disk('public')->url('member/' . $row->image);
             $data[] = [
                 'member_name' => $row->member_name,
-                'member_alamat' => $row->member_alamat,
+                'member_alamat' => $adress['provinsi'] . ', ' . $adress['city'] . ', ' . $adress['district'],
                 'image' => $row->image != null ? $image : 'https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=334&q=80',
                 'member_type' => 'Agen',
                 'date' => $row->tanggal_transaksi,

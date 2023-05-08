@@ -88,9 +88,6 @@ class RajaOngkirController extends Controller
                 'nama_member'   => $row->member_name,
                 'phone_member'  => $row->member_phone,
                 'alamat_member' => $row->member_alamat,
-                'province_id'   => $row->province_id,
-                'city_id'       => $row->city_id,
-                'district_id'   => $row->district_id,
                 'member_type'   => $row->member_type,
                 'member_status' => $row->member_status,
             ];
