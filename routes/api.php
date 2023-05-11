@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\Administrator\ApiDivisionsController;
 use App\Http\Controllers\Api\Administrator\ApiMembersController;
 use App\Http\Controllers\Api\Administrator\ApiProductsController;
+use App\Http\Controllers\Api\Administrator\ChatController;
 use App\Http\Controllers\Api\Administrator\LogisticController;
 use App\Http\Controllers\Api\Auth\ApiLoginController;
 use App\Http\Controllers\Api\Auth\ApiUsersController;
@@ -347,3 +348,7 @@ Route::controller(TiktiokSupplychainController::class)->group(function () {
     Route::middleware(['auth:sanctum'])->group(function () {
     });
 }); // tiktok supplychain
+
+Route::controller(ChatController::class)->group(function () {
+    Route::post('/message', 'message');
+});
