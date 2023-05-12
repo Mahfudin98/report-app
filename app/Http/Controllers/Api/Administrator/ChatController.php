@@ -8,9 +8,9 @@ use Illuminate\Http\Request;
 
 class ChatController extends Controller
 {
-    public function message(Request $request)
+    public function message()
     {
-        event(new Message($request->input('username'), $request->input('message')));
+        event(new Message(request()->username, request()->message));
 
         return ['status' => 'Success'];
     }

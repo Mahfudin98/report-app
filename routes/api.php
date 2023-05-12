@@ -45,6 +45,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::controller(ChatController::class)->group(function () {
+    Route::get('/message', 'message');
+});
 Route::controller(RajaOngkirController::class)->group(function () {
     Route::get('/provinsi', 'provinsi')->name('provinsi');
     Route::get('/kota/{id}', 'kota')->name('kota');
@@ -348,7 +351,3 @@ Route::controller(TiktiokSupplychainController::class)->group(function () {
     Route::middleware(['auth:sanctum'])->group(function () {
     });
 }); // tiktok supplychain
-
-Route::controller(ChatController::class)->group(function () {
-    Route::post('/message', 'message');
-});
