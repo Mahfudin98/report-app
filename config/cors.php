@@ -19,7 +19,14 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['*'],
+    'allowed_origins' => [
+        env('REPORT_CS_URL', 'https://ui-test.lsskincare.id'),
+        env('DASHBORAR_URL', 'https://dashboard.lsskincare.id'),
+        env('LANDINGPAGE_PUSAT', 'https://pusat.lsskincare.id'),
+        env('LANDINGPAGE_FORMEN', 'https://formen.lsskincare.id'),
+        env('LOCAL_FRONTEN', 'http://localhost:3000'),
+        env('LOCAL_FRONTEN1', 'http://localhost:3001'),
+    ],
 
     'allowed_origins_patterns' => [],
 
