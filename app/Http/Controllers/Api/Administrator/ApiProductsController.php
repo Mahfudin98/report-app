@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use App\Helpers\UserActivity as UserActivityHelper;
 use App\Http\Requests\administrator\StoreProductRequest;
+use App\Models\ProductDetail;
 use App\Models\UserActivity;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
@@ -92,6 +93,13 @@ class ApiProductsController extends Controller
                 'reseller'   => $request->reseller,
                 'agen'       => $request->agen
             ]);
+
+            ProductDetail::create([
+                'product_id' => $product->id,
+                'description' => $request->description,
+                'usage' => $request->usage,
+                'ingredients' => $request->ingredients,
+            ]);
             DB::commit();
             return response()->json(['status' => 'success'], 200);
         } catch (\Exception $e) {
@@ -102,10 +110,14 @@ class ApiProductsController extends Controller
 
     public function edit($code)
     {
-        $product = Product::where('product_code', $code)->join('product_prices', 'products.id', '=', 'product_prices.product_id')->join('product_categories', 'products.category_id', '=', 'product_categories.id')
+        $product = Product::where('product_code', $code)
+            ->join('product_prices', 'products.id', '=', 'product_prices.product_id')
+            ->join('product_categories', 'products.category_id', '=', 'product_categories.id')
+            ->leftJoin('product_details', 'products.id', '=', 'product_details.product_id')
             ->select(
                 'products.*',
                 'product_prices.*',
+                'product_details.*',
                 'product_categories.category_code',
                 'product_categories.category_name',
                 'product_categories.category_type',
@@ -141,6 +153,21 @@ class ApiProductsController extends Controller
                 'reseller'   => $request->reseller != '' ? $request->reseller : $harga->reseller,
                 'agen'       => $request->agen != '' ? $request->agen : $harga->agen,
             ]);
+            $productDetail = ProductDetail::where('product_id', $product->id)->first();
+            if ($productDetail != null) {
+                $productDetail->update([
+                    'description' => $request->description,
+                    'usage' => $request->usage,
+                    'ingredients' => $request->ingredients,
+                ]);
+            } else {
+                ProductDetail::create([
+                    'product_id' => $product->id,
+                    'description' => $request->description,
+                    'usage' => $request->usage,
+                    'ingredients' => $request->ingredients,
+                ]);
+            }
             DB::commit();
             return response()->json(['status' => 'success'], 200);
         } catch (\Exception $e) {
@@ -333,7 +360,8 @@ class ApiProductsController extends Controller
                 'category_code' => $code,
                 'category_name' => $request->category_name,
                 'category_type' => $request->category_type,
-                'category_pay'  => $request->category_pay
+                'category_pay'  => $request->category_pay,
+                'category_product' => $request->category_product,
             ]);
             DB::commit();
             return response()->json(['status' => 'success'], 200);

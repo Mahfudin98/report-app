@@ -62,6 +62,7 @@ return [
         env('LANDINGPAGE_FORMEN', 'https://formen.lsskincare.id'),
         env('LOCAL_FRONTEN', 'http://localhost:3000'),
         env('LOCAL_FRONTEN1', 'http://localhost:3001'),
+        env('LOCAL_FRONTEN_VUE', 'http://localhost:5173'),
     ],
     'asset_url' => env('ASSET_URL'),
 

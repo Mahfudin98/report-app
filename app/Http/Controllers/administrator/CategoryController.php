@@ -28,13 +28,14 @@ class CategoryController extends Controller
         for ($i = 0; $i < 3; $i++) {
             $randomString .= strtoupper($request->category_name)[rand(0, $charactersLength - 1)];
         }
-        $code = $randomString. mt_rand(1000, 9999);
+        $code = $randomString . mt_rand(1000, 9999);
 
         ProductCategory::create([
             'category_code' => $code,
             'category_name' => $request->category_name,
             'category_type' => $request->category_type,
-            'category_pay'  => $request->category_pay
+            'category_pay'  => $request->category_pay,
+            'category_product' => $request->category_product,
         ]);
 
         return back()->with(['success' => 'Divisi Ditambahkan']);
@@ -59,7 +60,8 @@ class CategoryController extends Controller
             'category_code' => $request->category_code,
             'category_name' => $request->category_name,
             'category_type' => $request->category_type,
-            'category_pay'  => $request->category_pay
+            'category_pay'  => $request->category_pay,
+            'category_product' => $request->category_product,
         ]);
 
         return redirect(route('category-index'))->with(['success' => 'Divisi Ditambahkan']);
