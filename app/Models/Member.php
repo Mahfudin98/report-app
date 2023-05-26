@@ -33,4 +33,9 @@ class Member extends Authenticatable
     {
         return $this->hasMany(Order::class);
     }
+
+    public function memberDetail()
+    {
+        return $this->hasMany(MemberDetail::class);
+    }
 }

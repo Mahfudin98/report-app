@@ -201,7 +201,9 @@ Route::controller(MembersDataController::class)->group(function () {
         Route::get('/owner-performance-member', 'performanceMember');
         Route::get('/owner-member-activity/{id}', 'activityID');
         Route::get('/owner-member-edit/{username}', 'editMember');
+        Route::get('/owner-member-detail/{id}', 'detailMember');
         Route::post('/owner-update-member/{username}', 'updateMember');
+        Route::post('/owner-add-member-detail/{id}', 'storeMemberDetail');
     });
 
     Route::get('/top-agen', 'memberTop');

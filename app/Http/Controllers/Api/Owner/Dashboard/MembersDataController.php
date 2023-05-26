@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\Owner\Dashboard;
 
 use App\Http\Controllers\Controller;
 use App\Models\Member;
+use App\Models\MemberDetail;
 use App\Models\TransactionProduct;
 use Carbon\Carbon;
 use DateTime;
@@ -354,5 +355,42 @@ class MembersDataController extends Controller
         }
 
         return response()->json(['data' => $data], 200);
+    }
+
+    public function detailMember($username)
+    {
+        $memberData = Member::where('username', $username)->first();
+        $member = MemberDetail::where('member_id', $memberData->id)->first();
+        $data = [
+            'member_id' => $memberData->id,
+            'facebook' => $member != null ? $member->url_fb : null,
+            'instagram' => $member != null ? $member->url_ig : null,
+            'tiktok' => $member != null ? $member->url_tiktok : null,
+            'website' => $member != null ? $member->url_website : null
+        ];
+
+        return response()->json(['status' => 'success', 'data' => $data], 200);
+    }
+    public function storeMemberDetail(Request $request, $id)
+    {
+        $detail = MemberDetail::where('member_id', $id)->first();
+        if ($detail == null) {
+            MemberDetail::create([
+                'member_id' => $id,
+                'url_fb' => $request->facebook,
+                'url_ig' => $request->instagram,
+                'url_tiktok' => $request->tiktok,
+                'url_website' => $request->website,
+            ]);
+        } else {
+            $detail->update([
+                'url_fb' => $request->facebook,
+                'url_ig' => $request->instagram,
+                'url_tiktok' => $request->tiktok,
+                'url_website' => $request->website,
+            ]);
+        }
+
+        return response()->json(['status' => 'success'], 200);
     }
 }
