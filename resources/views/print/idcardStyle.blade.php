@@ -41,6 +41,7 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
+            width: 100%;
         }
 
         .front-canvas {
@@ -72,6 +73,9 @@
         .image-back {
             object-fit: cover;
             width: 135px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         .bg-footer-back {
@@ -79,14 +83,13 @@
             right: 0;
             left: 0;
             bottom: 0.75rem;
-            background-image: background-image: linear-gradient(to bottom left, var(--tw-gradient-stops));
             width: 100%;
             height: 25px;
             background: rgb(234, 194, 130);
         }
 
         .text-footer-back {
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+            font-family: 'Poppins';
             font-size: 1rem;
             line-height: 1.5rem;
             font-weight: 600;
