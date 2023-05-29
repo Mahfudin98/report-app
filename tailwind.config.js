@@ -10,8 +10,13 @@ module.exports = {
 
     theme: {
         extend: {
+            screens: {
+                print: { raw: "print" },
+                screen: { raw: "screen" },
+            },
             fontFamily: {
                 sans: ["Nunito", ...defaultTheme.fontFamily.sans],
+                poppins: ["Poppins"],
             },
         },
     },
