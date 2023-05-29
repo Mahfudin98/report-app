@@ -11,6 +11,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Response;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use PDF;
 
 class MemberController extends Controller
 {
@@ -93,7 +94,8 @@ class MemberController extends Controller
     public function memberCard($username)
     {
         $member = DB::table('members')->leftJoin('member_details', 'members.id', '=', 'member_details.member_id')->where('members.username', $username)->first();
-
-        return view('print.idcard', compact('member'));
+        $pdf = PDF::loadView('print.idcard', compact('member'));
+        // return view('print.idcard', compact('member'));
+        return $pdf->stream();
     }
 }
