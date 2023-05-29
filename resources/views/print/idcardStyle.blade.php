@@ -33,26 +33,72 @@
         .path-top {
             fill: url(#front);
         }
+
+        .div-screen {
+            display: flex;
+            background-color: #F3F4F6;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .front-canvas {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .back-canvas {
+            overflow: hidden;
+            position: relative;
+            margin-bottom: 0.75rem;
+            border-radius: 0.5rem;
+            border-width: 1px;
+            height: 288px;
+            width: 523px;
+            background: rgb(0, 15, 32);
+        }
+
+        .back-canvas-sub {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+        }
+
+        .image-back {
+            object-fit: cover;
+            width: 135px;
+        }
+
+        .bg-footer-back {
+            position: absolute;
+            right: 0;
+            left: 0;
+            bottom: 0.75rem;
+            background-image: background-image: linear-gradient(to bottom left, var(--tw-gradient-stops));
+            width: 100%;
+            height: 25px;
+            background: rgb(234, 194, 130);
+        }
+
+        .text-footer-back {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+            font-size: 1rem;
+            line-height: 1.5rem;
+            font-weight: 600;
+            text-align: center;
+        }
     </style>
 </head>
 
 <body class="font-sans antialiased">
-    <div {{-- class="min-h-screen bg-gray-100 flex flex-col items-center justify-center" --}}
-        style="
-        display: flex;
-        background-color: #F3F4F6;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        min-height: 100vh;
-        ">
+    <div class="div-screen">
         {{-- front --}}
-        <div {{-- class="flex flex-col items-center justify-center" --}}
-            style="display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            ">
+        <div class="front-canvas">
             <!--
             <div
                 class="rounded-lg relative border overflow-hidden h-[288px] w-[523px] bg-gradient-to-bl mb-3 {{ $member->member_type == 1 ? 'to-[#8e6b47] from-[#eac282]' : 'to-[#fcf0ed] from-[#f4d3d3]' }} ">
@@ -333,52 +379,21 @@
             -->
         </div>
         {{-- back --}}
-        <div {{-- class="rounded-lg relative border overflow-hidden h-[288px] w-[523px] bg-gradient-to-br mb-3 {{ $member->member_type == 1 ? 'to-[#0a3749] from-[#000f20]' : 'to-[#fcf0ed] from-[#f4d3d3]' }} " --}}
+        <div class="back-canvas"
             style="
-                overflow: hidden;
-                position: relative;
-                margin-bottom: 0.75rem;
-                border-radius: 0.5rem;
-                border-width: 1px;
-                height: 288px;
-                width: 523px;
-                background: rgb(0,15,32);
                 background: {{ $member->member_type == 1 ? 'linear-gradient(144deg, rgba(0,15,32,1) 0%, rgba(10,55,73,1) 100%)' : 'linear-gradient(144deg, rgba(244,211,211,1) 0%, rgba(252,240,237,1) 100%)' }};
             ">
             {{-- <!-- --}}
-            <div {{-- class="flex items-center justify-center w-full h-full"  --}}
-                style="display: flex;
-            justify-content: center;
-            align-items: center;
-            width: 100%;
-            height: 100%;
-            ">
+            <div class="back-canvas-sub">
                 <img src="{{ $member->member_type == 1 ? asset('image/logo_emas.png') : asset('image/logo_id.png') }}"
-                    {{-- class="w-[135px] object-cover" --}}
-                    style="object-fit: cover;
-                    width: 135px;
-                    "
-                    alt="" />
+                    class="image-back" alt="" />
                 {{-- line footer --}}
-                <div {{-- class="w-full absolute bottom-3 right-0 left-0 bg-gradient-to-bl h-[25px] {{ $member->member_type == 1 ? 'to-[#8e6b47] from-[#eac282]' : 'to-[#ffb19d] from-[#f6a2a2]' }} " --}}
+                <div class="bg-footer-back"
                     style="
-                    position: absolute;
-                    right: 0;
-                    left: 0;
-                    bottom: 0.75rem;
-                    background-image: background-image: linear-gradient(to bottom left, var(--tw-gradient-stops));
-                    width: 100%;
-                    height: 25px;
-                    background: rgb(0,15,32);
-                background: {{ $member->member_type == 1 ? 'linear-gradient(144deg, rgba(0,15,32,1) 0%, rgba(10,55,73,1) 100%)' : 'linear-gradient(144deg, rgba(244,211,211,1) 0%, rgba(252,240,237,1) 100%)' }};
+                background: {{ $member->member_type == 1 ? 'linear-gradient(144deg, rgba(234,194,130,1) 0%, rgba(142,107,71,1) 100%)' : 'linear-gradient(144deg, rgba(246,162,162,1) 0%, rgba(255,177,157,1) 100%)' }};
                     ">
-                    <div {{-- class="font-sans text-base font-semibold text-center {{ $member->member_type == 1 ? 'text-[#0a3749]' : 'text-white' }} " --}}
+                    <div class="text-footer-back"
                         style="
-                        font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
-                        font-size: 1rem;
-                        line-height: 1.5rem;
-                        font-weight: 600;
-                        text-align: center;
                         color: {{ $member->member_type == 1 ? '#0a3749' : '#ffffff' }};
                         ">
                         www.pusat.lsskincare.id
