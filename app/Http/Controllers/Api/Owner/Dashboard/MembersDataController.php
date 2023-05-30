@@ -72,6 +72,7 @@ class MembersDataController extends Controller
                 'total_transaction' => $row->total,
                 'member_type' => $row->member_type,
                 'member_status' => $row->member_status,
+                'image_member_text' => $row->image != null && $row->image != 'null' ? $row->image : null,
             ];
         }
         return response()->json(['status' => 'success', 'data' => $data], 200);
