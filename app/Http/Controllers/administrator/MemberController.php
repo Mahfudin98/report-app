@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\View;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use PDF;
 
@@ -100,7 +101,8 @@ class MemberController extends Controller
     public function memberCardPrint($username)
     {
         $member = DB::table('members')->leftJoin('member_details', 'members.id', '=', 'member_details.member_id')->where('members.username', $username)->first();
-        $pdf = PDF::loadView('print.idcardStyle', compact('member'));
+        $view = View('print.idcardStyle', compact('member'));
+        $pdf = PDF::loadHTML($view->render());
         return $pdf->stream($member->member_name . '.pdf');
         // return $pdf->stream();
     }
