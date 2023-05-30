@@ -101,7 +101,7 @@ class MemberController extends Controller
     {
         $member = DB::table('members')->leftJoin('member_details', 'members.id', '=', 'member_details.member_id')->where('members.username', $username)->first();
         $pdf = PDF::loadView('print.idcardStyle', compact('member'));
-        return $pdf->download($member->member_name . '.pdf');
+        return $pdf->stream($member->member_name . '.pdf');
         // return $pdf->stream();
     }
 }
