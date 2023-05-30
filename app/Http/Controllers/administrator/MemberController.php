@@ -94,10 +94,14 @@ class MemberController extends Controller
     public function memberCard($username)
     {
         $member = DB::table('members')->leftJoin('member_details', 'members.id', '=', 'member_details.member_id')->where('members.username', $username)->first();
+        return view('print.idcard', compact('member'));
+    }
 
+    public function memberCardPrint($username)
+    {
+        $member = DB::table('members')->leftJoin('member_details', 'members.id', '=', 'member_details.member_id')->where('members.username', $username)->first();
         $pdf = PDF::loadView('print.idcardStyle', compact('member'));
         return $pdf->download($member->member_name . '.pdf');
-        // return view('print.idcardStyle', compact('member'));
         // return $pdf->stream();
     }
 }

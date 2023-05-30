@@ -70,6 +70,7 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::get('/member-card/{username}', [MemberController::class, 'memberCard'])->name('member-card');
+Route::get('/member-card-print/{username}', [MemberController::class, 'memberCardPrint'])->name('member-card-print');
 
 Route::get('add-to-log', [UserActivityController::class, 'testLog']);
 Route::get('log-activity', [UserActivityController::class, 'userActivity']);
