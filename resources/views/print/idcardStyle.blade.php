@@ -8,12 +8,18 @@
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
     <title>{{ config('app.name', 'Laravel') }}</title>
-
-    <!-- Fonts -->
     <link rel="stylesheet" href="https://fonts.bunny.net/css2?family=Nunito:wght@400;600;700&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css"
+        integrity="sha512-1sCRPdkRXhBV2PBLUdRb4tMg1w2YPf37qatUFeS7zlBy7jJI8Lf4VHwWfZZfpXtYSLy85pkm9GaYVYMfw5BC1A=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-gH2yIJqKdNHPEq0n4Mqa/HGKIhSkIHeL5AyhkYV8i59U5AR6csBvApHHNl/vI1Bx" crossorigin="anonymous">
     <link
         href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
         rel="stylesheet">
+    <!-- Scripts -->
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <!-- Fonts -->
     <style>
         .pathFront {
             fill: url(#g1);
@@ -389,37 +395,37 @@
 
         @layer tailwind-reset {
             /*
-! tailwindcss v3.1.8 | MIT License | https://tailwindcss.com
-*/
-            /*
-1. Prevent padding and border from affecting element width. (https://github.com/mozdevs/cssremedy/issues/4)
-2. Allow adding a border to an element by just adding a border-width. (https://github.com/tailwindcss/tailwindcss/pull/116)
-*/
+        ! tailwindcss v3.1.8 | MIT License | https://tailwindcss.com
+        */
+                    /*
+        1. Prevent padding and border from affecting element width. (https://github.com/mozdevs/cssremedy/issues/4)
+        2. Allow adding a border to an element by just adding a border-width. (https://github.com/tailwindcss/tailwindcss/pull/116)
+        */
 
-            *,
-            ::before,
-            ::after {
-                box-sizing: border-box;
-                /* 1 */
-                border-width: 0;
-                /* 2 */
-                border-style: solid;
-                /* 2 */
-                border-color: rgb(var(--tw-color-gray-200) / 1);
-                /* 2 */
-            }
+                    *,
+                    ::before,
+                    ::after {
+                        box-sizing: border-box;
+                        /* 1 */
+                        border-width: 0;
+                        /* 2 */
+                        border-style: solid;
+                        /* 2 */
+                        border-color: rgb(var(--tw-color-gray-200) / 1);
+                        /* 2 */
+                    }
 
-            ::before,
-            ::after {
-                --tw-content: "";
-            }
+                    ::before,
+                    ::after {
+                        --tw-content: "";
+                    }
 
-            /*
-1. Use a consistent sensible line-height in all browsers.
-2. Prevent adjustments of font size after orientation changes in iOS.
-3. Use a more readable tab size.
-4. Use the user's configured `sans` font-family by default.
-*/
+                    /*
+        1. Use a consistent sensible line-height in all browsers.
+        2. Prevent adjustments of font size after orientation changes in iOS.
+        3. Use a more readable tab size.
+        4. Use the user's configured `sans` font-family by default.
+        */
 
             html {
                 line-height: 1.5;
@@ -436,9 +442,9 @@
             }
 
             /*
-1. Remove the margin in all browsers.
-2. Inherit line-height from `html` so users can set them as a class directly on the `html` element.
-*/
+        1. Remove the margin in all browsers.
+        2. Inherit line-height from `html` so users can set them as a class directly on the `html` element.
+        */
 
             body {
                 margin: 0;
@@ -448,10 +454,10 @@
             }
 
             /*
-1. Add the correct height in Firefox.
-2. Correct the inheritance of border color in Firefox. (https://bugzilla.mozilla.org/show_bug.cgi?id=190655)
-3. Ensure horizontal rules are visible by default.
-*/
+        1. Add the correct height in Firefox.
+        2. Correct the inheritance of border color in Firefox. (https://bugzilla.mozilla.org/show_bug.cgi?id=190655)
+        3. Ensure horizontal rules are visible by default.
+        */
 
             hr {
                 height: 0;
@@ -463,8 +469,8 @@
             }
 
             /*
-Add the correct text decoration in Chrome, Edge, and Safari.
-*/
+        Add the correct text decoration in Chrome, Edge, and Safari.
+        */
 
             abbr:where([title]) {
                 -webkit-text-decoration: underline dotted;
@@ -472,8 +478,8 @@ Add the correct text decoration in Chrome, Edge, and Safari.
             }
 
             /*
-Remove the default font size and weight for headings.
-*/
+        Remove the default font size and weight for headings.
+        */
 
             h1,
             h2,
@@ -486,8 +492,8 @@ Remove the default font size and weight for headings.
             }
 
             /*
-Reset links to optimize for opt-in styling instead of opt-out.
-*/
+        Reset links to optimize for opt-in styling instead of opt-out.
+        */
 
             a {
                 color: inherit;
@@ -495,8 +501,8 @@ Reset links to optimize for opt-in styling instead of opt-out.
             }
 
             /*
-Add the correct font weight in Edge and Safari.
-*/
+        Add the correct font weight in Edge and Safari.
+        */
 
             b,
             strong {
@@ -504,9 +510,9 @@ Add the correct font weight in Edge and Safari.
             }
 
             /*
-1. Use the user's configured `mono` font family by default.
-2. Correct the odd `em` font sizing in all browsers.
-*/
+        1. Use the user's configured `mono` font family by default.
+        2. Correct the odd `em` font sizing in all browsers.
+        */
 
             code,
             kbd,
@@ -519,16 +525,16 @@ Add the correct font weight in Edge and Safari.
             }
 
             /*
-Add the correct font size in all browsers.
-*/
+        Add the correct font size in all browsers.
+        */
 
             small {
                 font-size: 80%;
             }
 
             /*
-Prevent `sub` and `sup` elements from affecting the line height in all browsers.
-*/
+        Prevent `sub` and `sup` elements from affecting the line height in all browsers.
+        */
 
             sub,
             sup {
@@ -547,10 +553,10 @@ Prevent `sub` and `sup` elements from affecting the line height in all browsers.
             }
 
             /*
-1. Remove text indentation from table contents in Chrome and Safari. (https://bugs.chromium.org/p/chromium/issues/detail?id=999088, https://bugs.webkit.org/show_bug.cgi?id=201297)
-2. Correct table border color inheritance in all Chrome and Safari. (https://bugs.chromium.org/p/chromium/issues/detail?id=935729, https://bugs.webkit.org/show_bug.cgi?id=195016)
-3. Remove gaps between table borders by default.
-*/
+        1. Remove text indentation from table contents in Chrome and Safari. (https://bugs.chromium.org/p/chromium/issues/detail?id=999088, https://bugs.webkit.org/show_bug.cgi?id=201297)
+        2. Correct table border color inheritance in all Chrome and Safari. (https://bugs.chromium.org/p/chromium/issues/detail?id=935729, https://bugs.webkit.org/show_bug.cgi?id=195016)
+        3. Remove gaps between table borders by default.
+        */
 
             table {
                 text-indent: 0;
@@ -562,10 +568,10 @@ Prevent `sub` and `sup` elements from affecting the line height in all browsers.
             }
 
             /*
-1. Change the font styles in all browsers.
-2. Remove the margin in Firefox and Safari.
-3. Remove default padding in all browsers.
-*/
+        1. Change the font styles in all browsers.
+        2. Remove the margin in Firefox and Safari.
+        3. Remove default padding in all browsers.
+        */
 
             button,
             input,
@@ -589,8 +595,8 @@ Prevent `sub` and `sup` elements from affecting the line height in all browsers.
             }
 
             /*
-Remove the inheritance of text transform in Edge and Firefox.
-*/
+        Remove the inheritance of text transform in Edge and Firefox.
+        */
 
             button,
             select {
@@ -598,9 +604,9 @@ Remove the inheritance of text transform in Edge and Firefox.
             }
 
             /*
-1. Correct the inability to style clickable types in iOS and Safari.
-2. Remove default button styles.
-*/
+        1. Correct the inability to style clickable types in iOS and Safari.
+        2. Remove default button styles.
+        */
 
             button,
             [type="button"],
@@ -615,32 +621,32 @@ Remove the inheritance of text transform in Edge and Firefox.
             }
 
             /*
-Use the modern Firefox focus style for all focusable elements.
-*/
+        Use the modern Firefox focus style for all focusable elements.
+        */
 
             :-moz-focusring {
                 outline: auto;
             }
 
             /*
-Remove the additional `:invalid` styles in Firefox. (https://github.com/mozilla/gecko-dev/blob/2f9eacd9d3d995c937b4251a5557d95d494c9be1/layout/style/res/forms.css#L728-L737)
-*/
+        Remove the additional `:invalid` styles in Firefox. (https://github.com/mozilla/gecko-dev/blob/2f9eacd9d3d995c937b4251a5557d95d494c9be1/layout/style/res/forms.css#L728-L737)
+        */
 
             :-moz-ui-invalid {
                 box-shadow: none;
             }
 
             /*
-Add the correct vertical alignment in Chrome and Firefox.
-*/
+        Add the correct vertical alignment in Chrome and Firefox.
+        */
 
             progress {
                 vertical-align: baseline;
             }
 
             /*
-Correct the cursor style of increment and decrement buttons in Safari.
-*/
+        Correct the cursor style of increment and decrement buttons in Safari.
+        */
 
             ::-webkit-inner-spin-button,
             ::-webkit-outer-spin-button {
@@ -648,9 +654,9 @@ Correct the cursor style of increment and decrement buttons in Safari.
             }
 
             /*
-1. Correct the odd appearance in Chrome and Safari.
-2. Correct the outline style in Safari.
-*/
+        1. Correct the odd appearance in Chrome and Safari.
+        2. Correct the outline style in Safari.
+        */
 
             [type="search"] {
                 -webkit-appearance: textfield;
@@ -660,17 +666,17 @@ Correct the cursor style of increment and decrement buttons in Safari.
             }
 
             /*
-Remove the inner padding in Chrome and Safari on macOS.
-*/
+        Remove the inner padding in Chrome and Safari on macOS.
+        */
 
             ::-webkit-search-decoration {
                 -webkit-appearance: none;
             }
 
             /*
-1. Correct the inability to style clickable types in iOS and Safari.
-2. Change font properties to `inherit` in Safari.
-*/
+        1. Correct the inability to style clickable types in iOS and Safari.
+        2. Change font properties to `inherit` in Safari.
+        */
 
             ::-webkit-file-upload-button {
                 -webkit-appearance: button;
@@ -680,16 +686,16 @@ Remove the inner padding in Chrome and Safari on macOS.
             }
 
             /*
-Add the correct display in Chrome and Safari.
-*/
+        Add the correct display in Chrome and Safari.
+        */
 
             summary {
                 display: list-item;
             }
 
             /*
-Removes the default spacing and border for appropriate elements.
-*/
+        Removes the default spacing and border for appropriate elements.
+        */
 
             blockquote,
             dl,
@@ -725,17 +731,17 @@ Removes the default spacing and border for appropriate elements.
             }
 
             /*
-Prevent resizing textareas horizontally by default.
-*/
+        Prevent resizing textareas horizontally by default.
+        */
 
             textarea {
                 resize: vertical;
             }
 
             /*
-1. Reset the default placeholder opacity in Firefox. (https://github.com/tailwindlabs/tailwindcss/issues/3300)
-2. Set the default placeholder color to the user's configured gray 400 color.
-*/
+        1. Reset the default placeholder opacity in Firefox. (https://github.com/tailwindlabs/tailwindcss/issues/3300)
+        2. Set the default placeholder color to the user's configured gray 400 color.
+        */
 
             input::-moz-placeholder,
             textarea::-moz-placeholder {
@@ -754,8 +760,8 @@ Prevent resizing textareas horizontally by default.
             }
 
             /*
-Set the default cursor for buttons.
-*/
+        Set the default cursor for buttons.
+        */
 
             button,
             [role="button"] {
@@ -763,17 +769,17 @@ Set the default cursor for buttons.
             }
 
             /*
-Make sure disabled buttons don't get the pointer cursor.
-*/
+        Make sure disabled buttons don't get the pointer cursor.
+        */
             :disabled {
                 cursor: default;
             }
 
             /*
-1. Make replaced elements `display: block` by default. (https://github.com/mozdevs/cssremedy/issues/14)
-2. Add `vertical-align: middle` to align replaced elements more sensibly by default. (https://github.com/jensimmons/cssremedy/issues/14#issuecomment-634934210)
-   This can trigger a poorly considered lint error in some tools but is included by design.
-*/
+        1. Make replaced elements `display: block` by default. (https://github.com/mozdevs/cssremedy/issues/14)
+        2. Add `vertical-align: middle` to align replaced elements more sensibly by default. (https://github.com/jensimmons/cssremedy/issues/14#issuecomment-634934210)
+        This can trigger a poorly considered lint error in some tools but is included by design.
+        */
 
             img,
             svg,
@@ -790,8 +796,8 @@ Make sure disabled buttons don't get the pointer cursor.
             }
 
             /*
-Constrain images and videos to the parent width and preserve their intrinsic aspect ratio. (https://github.com/mozdevs/cssremedy/issues/14)
-*/
+        Constrain images and videos to the parent width and preserve their intrinsic aspect ratio. (https://github.com/mozdevs/cssremedy/issues/14)
+        */
 
             img,
             video {
@@ -1565,6 +1571,18 @@ Constrain images and videos to the parent width and preserve their intrinsic asp
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.5/dist/umd/popper.min.js"
+        integrity="sha384-Xe+8cL9oJa6tN/veChSP7q+mnSPaj5Bcu9mPX5F5xIGE0DVittaqT5lorf0EI7Vk" crossorigin="anonymous">
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.min.js"
+        integrity="sha384-ODmDIVzN+pFdexxHEHFBQH3/9/vQ9uori45z4JjnFsRydbmQbmL5t1tQ0culUzyK" crossorigin="anonymous">
+    </script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/numeral.js/2.0.6/numeral.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.0/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
 </body>
 
 </html>
