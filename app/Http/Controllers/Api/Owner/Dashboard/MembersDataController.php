@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Response;
 
 class MembersDataController extends Controller
 {
@@ -393,5 +394,22 @@ class MembersDataController extends Controller
         }
 
         return response()->json(['status' => 'success'], 200);
+    }
+
+    public function memberImage($filename)
+    {
+        $path = storage_path('app/public/member/' . $filename);
+
+        if (!file_exists($path)) {
+            abort(404);
+        }
+
+        $file = File::get($path);
+        $type = File::mimeType($path);
+
+        $response = Response::make($file, 200);
+        $response->header("Content-Type", $type);
+
+        return $response;
     }
 }
