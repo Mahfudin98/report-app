@@ -208,6 +208,9 @@ Route::controller(MembersDataController::class)->group(function () {
 
     Route::get('/top-agen', 'memberTop');
     Route::get('/owner-member-image/{filename}', 'memberImage');
+    Route::get('/owner-member-detail-qr/{username}', 'memberDetailQR');
+    Route::get('/owner-line-data-member-qr/{id}', 'lineChartMemberID');
+    Route::get('/owner-bar-data-member-qr/{id}', 'barChartMemberID');
 });
 
 Route::controller(AuthMemberController::class)->group(function () {

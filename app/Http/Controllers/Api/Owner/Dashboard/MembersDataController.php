@@ -412,4 +412,34 @@ class MembersDataController extends Controller
 
         return $response;
     }
+
+    public function memberDetailQR($username)
+    {
+        $member = DB::table('members')
+            ->leftJoin('member_details', 'members.id', '=', 'member_details.member_id')
+            ->select(
+                'members.*',
+                'member_details.url_fb',
+                'member_details.url_ig',
+                'member_details.url_tiktok',
+                'member_details.url_website',
+            )
+            ->where('members.username', $username)
+            ->first();
+        $data = [
+            'member_id' => $member->id,
+            'usernamae' => $member->username,
+            'member_name' => $member->member_name,
+            'image_member' => $member->image != null && $member->image != 'null' ? Storage::disk('public')->url('member/' . $member->image) : null,
+            'member_phone' => $member->member_phone,
+            'member_type' => $member->member_type == 1 ? 'Agen' : 'Reseller',
+            'join_on' => $member->join_on,
+            'status' => $member->member_status == 1 ? 'Aktif' : 'Tidak Aktif',
+            'facebook' => $member->url_fb,
+            'instagram' => $member->url_ig,
+            'tiktok' => $member->url_tiktok,
+            'website' => $member->url_website,
+        ];
+        return response()->json(['status' => 'success', 'data' => $data], 200);
+    }
 }
