@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Api\Owner\Dashboard;
 use App\Http\Controllers\Controller;
 use App\Models\Member;
 use App\Models\MemberDetail;
+use App\Models\ProductCategory;
+use App\Models\Transaction;
 use App\Models\TransactionProduct;
 use Carbon\Carbon;
 use DateTime;
@@ -441,5 +443,28 @@ class MembersDataController extends Controller
             'website' => $member->url_website,
         ];
         return response()->json(['status' => 'success', 'data' => $data], 200);
+    }
+
+    public function pointMember($id)
+    {
+        $date = Carbon::now();
+        $from =  request()->from != '' ? request()->from : $date->firstOfMonth()->format('Y-m-d');
+        $to = request()->to != '' ? request()->to : $date->endOfMonth()->format('Y-m-d');
+
+        $tr = Transaction::where('member_id', $id)
+            ->whereBetween('tanggal_transaksi', [$from, $to])
+            ->groupBy('tanggal_transaksi')
+            ->get();
+        $data = [];
+        foreach ($tr as $value) {
+            $product = DB::table('transaction_products')
+                ->join('products', 'transaction_products.product_id', '=', 'products.id')
+                ->join('product_categories', 'products.category_id', '=', 'product_categories.id')
+                ->where('transaction_products.transaction_id', $value->id)
+                ->where('product_categories.category_pay', '!=', 'ecer')
+                ->get();
+            $data[] = $product->sum('qty') >= 2 ? $product->sum('qty') : 0;
+        }
+        return response()->json(['status' => 'success', 'data' => array_sum($data)], 200);
     }
 }
