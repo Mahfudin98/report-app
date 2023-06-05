@@ -467,6 +467,6 @@ class MembersDataController extends Controller
             ->where('product_categories.category_pay', '!=', 'ecer')
             ->get();
         $data[] = $product->sum('qty') >= 2 ? $product->sum('qty') : 0;
-        return response()->json(['status' => 'success', 'data' => array_sum($data), 'product' => $product, 'transaction' => $tr], 200);
+        return response()->json(['status' => 'success', 'data' => array_sum($data), 'product' => $product, 'transaction' => $tr, 'sum_array' => $product->sum('qty') >= 2 ? $product->sum('qty') : 0], 200);
     }
 }
