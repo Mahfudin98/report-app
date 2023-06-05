@@ -458,6 +458,7 @@ class MembersDataController extends Controller
         $data = [];
         foreach ($tr as $value) {
             $product = DB::table('transaction_products')
+                ->join('transactions', 'transaction_products.transaction_id', '=', 'transactions.id')
                 ->join('products', 'transaction_products.product_id', '=', 'products.id')
                 ->join('product_categories', 'products.category_id', '=', 'product_categories.id')
                 ->where('transaction_products.transaction_id', $value->id)
