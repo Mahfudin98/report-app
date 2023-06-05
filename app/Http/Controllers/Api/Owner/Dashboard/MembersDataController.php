@@ -456,17 +456,15 @@ class MembersDataController extends Controller
             ->groupBy('tanggal_transaksi')
             ->get();
         $data = [];
-        // foreach ($tr as $value) {
-        // }
-        $product = DB::table('transaction_products')
-            ->join('transactions', 'transaction_products.transaction_id', '=', 'transactions.id')
-            ->join('products', 'transaction_products.product_id', '=', 'products.id')
-            ->join('product_categories', 'products.category_id', '=', 'product_categories.id')
-            ->where('transactions.member_id', $id)
-            ->whereBetween('transactions.tanggal_transaksi', [$from, $to])
-            ->where('product_categories.category_pay', '!=', 'ecer')
-            ->get();
-        $data[] = $product->sum('qty') >= 2 ? $product->sum('qty') : 0;
-        return response()->json(['status' => 'success', 'data' => array_sum($data), 'product' => $product, 'transaction' => $tr, 'sum_array' => $data], 200);
+        foreach ($tr as $value) {
+            $product = DB::table('transaction_products')
+                ->join('products', 'transaction_products.product_id', '=', 'products.id')
+                ->join('product_categories', 'products.category_id', '=', 'product_categories.id')
+                ->where('transaction_products.transaction_id', $value->id)
+                ->where('product_categories.category_pay', '!=', 'ecer')
+                ->get();
+            $data[] = $product->sum('qty') >= 2 ? $product->sum('qty') : 0;
+        }
+        return response()->json(['status' => 'success', 'data' => array_sum($data)], 200);
     }
 }
