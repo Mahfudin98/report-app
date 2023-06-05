@@ -465,6 +465,6 @@ class MembersDataController extends Controller
                 ->get();
             $data[] = $product->sum('qty') >= 2 ? $product->sum('qty') : 0;
         }
-        return response()->json(['status' => 'success', 'data' => array_sum($data)], 200);
+        return response()->json(['status' => 'success', 'data' => array_sum($data), 'product' => $product], 200);
     }
 }
