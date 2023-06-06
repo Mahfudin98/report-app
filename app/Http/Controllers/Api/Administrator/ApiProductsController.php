@@ -381,11 +381,12 @@ class ApiProductsController extends Controller
             ->get();
         $data = [];
         foreach ($product as $item) {
+            $path = Storage::disk('public')->url('product/' . $item->image);
             $data[] = [
                 'product_name' => $item->product_name,
                 'product_code' => $item->product_code,
                 'product_weight' => $item->product_weight,
-                'product_image' => $item->image,
+                'product_image' => $item->image != null ? $path : null,
                 'product_price' => $item->end_user,
                 'category_name' => $item->category_name,
                 'category_pay' => $item->category_pay,
