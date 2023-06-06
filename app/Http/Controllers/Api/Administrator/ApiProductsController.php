@@ -370,4 +370,30 @@ class ApiProductsController extends Controller
             return response()->json(['error' => $e->getMessage()]);
         }
     }
+
+    public function formenProduct()
+    {
+        $product = DB::table('products')
+            ->join('product_categories', 'products.category_id', '=', 'product_categories.id')
+            ->join('product_details', 'products.id', '=', 'product_details.product_id')
+            ->join('product_prices', 'products.id', '=', 'product_prices.product_id')
+            ->where('product_categories.category_product', 'forman')
+            ->get();
+        $data = [];
+        foreach ($product as $item) {
+            $data[] = [
+                'product_name' => $item->product_name,
+                'product_code' => $item->product_code,
+                'product_weight' => $item->product_weight,
+                'product_image' => $item->image,
+                'product_price' => $item->end_user,
+                'category_name' => $item->category_name,
+                'category_pay' => $item->category_pay,
+                'deskripsi' => $item->description,
+                'pemakaian' => $item->usage,
+                'ingredient' => $item->ingredients
+            ];
+        }
+        return response()->json(['status' => 'success', 'data' => $data], 200);
+    }
 }
