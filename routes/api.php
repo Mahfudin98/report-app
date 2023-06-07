@@ -123,6 +123,7 @@ Route::controller(ApiMembersController::class)->group(function () {
         Route::get('/member-edit/{id}', 'edit');
         Route::post('/member-update/{id}', 'update');
         Route::post('/update-table', 'updateTable');
+        Route::post('/member-update-detail/{id}', 'storeMemberDetail');
     });
 });
 

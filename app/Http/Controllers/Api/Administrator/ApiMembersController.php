@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use App\Helpers\UserActivity as UserActivityHelper;
+use App\Models\MemberDetail;
 use Illuminate\Support\Facades\File;
 
 class ApiMembersController extends Controller
@@ -27,8 +28,8 @@ class ApiMembersController extends Controller
         }
         $data = [];
         foreach ($members->get() as $row) {
-            $path = Storage::disk('public')->url('member/'.$row->image);
-            $data[] =[
+            $path = Storage::disk('public')->url('member/' . $row->image);
+            $data[] = [
                 'id' => $row->id,
                 'nama' => $row->member_name,
                 'username' => $row->username,
@@ -163,8 +164,8 @@ class ApiMembersController extends Controller
             $member = Member::all();
             foreach ($member as $row) {
                 DB::table('members')
-                ->where('id', $row->id)
-                ->update(array('username' => Str::slug($row->member_name) . mt_rand(10, 99), 'password' => bcrypt('password')));
+                    ->where('id', $row->id)
+                    ->update(array('username' => Str::slug($row->member_name) . mt_rand(10, 99), 'password' => bcrypt('password')));
             }
             DB::commit();
             return response()->json(['status' => 'success'], 200);
@@ -172,5 +173,31 @@ class ApiMembersController extends Controller
             DB::rollback();
             return response()->json(['error' => $e->getMessage()]);
         }
+    }
+    public function storeMemberDetail(Request $request, $id)
+    {
+        $member = Member::find($id);
+        $member->update([
+            'member_phone' => $request->member_phone != '' ? $request->member_phone : $member->member_phone,
+        ]);
+        $detail = MemberDetail::where('member_id', $id)->first();
+        if ($detail == null) {
+            MemberDetail::create([
+                'member_id' => $id,
+                'url_fb' => $request->facebook,
+                'url_ig' => $request->instagram,
+                'url_tiktok' => $request->tiktok,
+                'url_website' => $request->website,
+            ]);
+        } else {
+            $detail->update([
+                'url_fb' => $request->facebook,
+                'url_ig' => $request->instagram,
+                'url_tiktok' => $request->tiktok,
+                'url_website' => $request->website,
+            ]);
+        }
+
+        return response()->json(['status' => 'success'], 200);
     }
 }
