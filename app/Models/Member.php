@@ -38,4 +38,9 @@ class Member extends Authenticatable
     {
         return $this->hasMany(MemberDetail::class);
     }
+
+    public function page()
+    {
+        return $this->hasMany(Page::class);
+    }
 }

@@ -13,6 +13,7 @@ use App\Http\Controllers\Api\Dashboard\DashboardIndex;
 use App\Http\Controllers\Api\Dashboard\ProfileDashboardController;
 use App\Http\Controllers\Api\Member\Auth\AuthMemberController;
 use App\Http\Controllers\Api\Member\DashboardMemberController;
+use App\Http\Controllers\Api\Member\PagesController;
 use App\Http\Controllers\Api\Member\ProductMemberController;
 use App\Http\Controllers\Api\Owner\Dashboard\CardController;
 use App\Http\Controllers\Api\Owner\Dashboard\DashboardController;
@@ -234,6 +235,13 @@ Route::controller(DashboardMemberController::class)->group(function () {
     Route::middleware(['auth:member'])->group(function () {
         Route::get('/member-rank-list', 'list');
         Route::get('/member-line-chart', 'lineChartMemberId');
+    });
+});
+
+Route::controller(PagesController::class)->group(function () {
+    Route::middleware(['auth:sanctum'])->group(function () {
+        Route::get('/member-page-index/{username}', 'index');
+        Route::post('/member-page-add', 'store');
     });
 });
 
