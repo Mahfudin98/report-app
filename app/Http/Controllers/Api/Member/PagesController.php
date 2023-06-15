@@ -19,6 +19,12 @@ class PagesController extends Controller
         return response()->json(['status' => 'success', 'data' => $page], 200);
     }
 
+    function listLink($code)
+    {
+        $url = PageLink::where('page_id', $code)->get();
+        return response()->json(['status' => 'success', 'data' => $url], 200);
+    }
+
     function store(Request $request)
     {
         $this->validate($request, [
@@ -66,12 +72,22 @@ class PagesController extends Controller
         }
     }
 
-    function edit($id)
+    function updatePage(Request $request, $id)
     {
+        $page = Page::where('page_id', $id)->first();
+        $page->update([
+            "title" => $request->title != '' ? $request->title : $page->title,
+            "description" => $request->description != '' ? $request->description : $page->description,
+            'status' => $request->status != '' ? $request->status : $page->status
+        ]);
+        return response()->json(['status' => 'success'], 200);
     }
 
-    function update(Request $request, $id)
+    function removeLink($id)
     {
+        $link = PageLink::find($id);
+        $link->delete();
+        return response()->json(['status' => 'success'], 200);
     }
 
     function pageView()

@@ -241,7 +241,10 @@ Route::controller(DashboardMemberController::class)->group(function () {
 Route::controller(PagesController::class)->group(function () {
     Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('/member-page-index/{username}', 'index');
+        Route::get('/member-page-list-link/{code}', 'listLink');
         Route::post('/member-page-add', 'store');
+        Route::post('/member-page-update/{id}', 'updatePage');
+        Route::delete('/member-page-delete/{id}', 'removeLink');
     });
 });
 
