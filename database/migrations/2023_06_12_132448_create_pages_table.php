@@ -20,6 +20,8 @@ return new class extends Migration
             $table->string('product_code')->nullable();
             $table->string('title');
             $table->text('description')->nullable();
+            $table->integer('harga_jual')->nullable();
+            $table->integer('harga_discount')->nullable();
             $table->boolean('type')->comment('0: landing page, 1: linktree');
             $table->boolean('status')->default(1);
             $table->timestamps();

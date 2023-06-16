@@ -244,6 +244,8 @@ Route::controller(PagesController::class)->group(function () {
         Route::get('/member-page-list-link/{code}', 'listLink');
         Route::post('/member-page-add', 'store');
         Route::post('/member-page-update/{id}', 'updatePage');
+        Route::post('/member-page-add-link/{id}', 'addLink');
+        Route::post('/member-page-edit-link/{id}', 'editLink');
         Route::delete('/member-page-delete/{id}', 'removeLink');
     });
 });

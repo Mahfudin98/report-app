@@ -52,6 +52,8 @@ class PagesController extends Controller
                 'member_id' => $request->member_id,
                 'product_code' => $request->product_id,
                 'title' => $request->title,
+                'harga_jual' => $request->harga_jual,
+                'harga_discount' => $request->harga_discount,
                 'description' => $request->description,
                 'type' => $request->type,
             ]);
@@ -77,6 +79,8 @@ class PagesController extends Controller
         $page = Page::where('page_id', $id)->first();
         $page->update([
             "title" => $request->title != '' ? $request->title : $page->title,
+            "harga_jual" => $request->harga_jual != '' ? $request->harga_jual : $page->harga_jual,
+            "harga_discount" => $request->harga_discount != '' ? $request->harga_discount : $page->harga_discount,
             "description" => $request->description != '' ? $request->description : $page->description,
             'status' => $request->status != '' ? $request->status : $page->status
         ]);
@@ -87,6 +91,36 @@ class PagesController extends Controller
     {
         $link = PageLink::find($id);
         $link->delete();
+        return response()->json(['status' => 'success'], 200);
+    }
+
+    function addLink(Request $request, $id)
+    {
+        DB::beginTransaction();
+        try {
+            $data = $request->all();
+            foreach ($data['title_link'] as $key => $value) {
+                $link = [
+                    'page_id' => $id,
+                    'title' => $data['title_link'][$key],
+                    'link' => $data['link'][$key],
+                ];
+                PageLink::create($link);
+            }
+            DB::commit();
+            return response()->json(['status' => 'success'], 200);
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response()->json(['error' => $e->getMessage()]);
+        }
+    }
+
+    function editLink(Request $request, $id)
+    {
+        $link = PageLink::find($id);
+        $link->update([
+            'link' => $request->link,
+        ]);
         return response()->json(['status' => 'success'], 200);
     }
 
