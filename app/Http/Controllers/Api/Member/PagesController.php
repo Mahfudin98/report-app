@@ -124,7 +124,10 @@ class PagesController extends Controller
         return response()->json(['status' => 'success'], 200);
     }
 
-    function pageView()
+    function pageViewLinktree($id)
     {
+        $page = Page::where('page_id', $id)->where('type', 1)->first();
+        $pageLink = PageLink::where('page_id', $id)->get();
+        return response()->json(['status' => 'success', 'data' => ['page' => $page, 'link' => $pageLink]], 200);
     }
 }

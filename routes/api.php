@@ -248,6 +248,7 @@ Route::controller(PagesController::class)->group(function () {
         Route::post('/member-page-edit-link/{id}', 'editLink');
         Route::delete('/member-page-delete/{id}', 'removeLink');
     });
+    Route::get('/member-page-view-linktree/{id}', 'pageViewLinktree');
 });
 
 // route for tiktok
