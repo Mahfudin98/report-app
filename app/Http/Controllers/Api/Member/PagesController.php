@@ -7,6 +7,7 @@ use App\Models\Page;
 use App\Models\PageLink;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class PagesController extends Controller
 {
@@ -126,8 +127,31 @@ class PagesController extends Controller
 
     function pageViewLinktree($id)
     {
-        $page = Page::where('page_id', $id)->where('type', 1)->first();
+        $page = Page::where('page_id', $id)->where('type', 1)->where('status', 1)->first();
         $pageLink = PageLink::where('page_id', $id)->get();
         return response()->json(['status' => 'success', 'data' => ['page' => $page, 'link' => $pageLink]], 200);
+    }
+    function pageViewLP($id)
+    {
+        $page = Page::where('page_id', $id)->where('type', 0)->where('status', 1)->first();
+        $product = DB::table('products')
+            ->join('product_prices', 'product_prices.product_id', '=', 'products.id')
+            ->select(
+                'products.product_code',
+                'products.product_name',
+                'products.image',
+                'product_prices.end_user'
+            )
+            ->where('products.product_code', $page->product_code)
+            ->first();
+        $pageLink = PageLink::where('page_id', $id)->first();
+        $path = Storage::disk('public')->url('product/' . $product->image);
+        $productData = [
+            'product_code' => $product->product_code,
+            'product_name' => $product->product_name,
+            'image' => $path,
+            'end_user' => $product->end_user
+        ];
+        return response()->json(['status' => 'success', 'data' => ['page' => $page, 'link' => $pageLink, 'product' => $productData]], 200);
     }
 }
