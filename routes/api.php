@@ -119,7 +119,7 @@ Route::controller(ApiProductsController::class)->group(function () {
 Route::controller(ApiMembersController::class)->group(function () {
     Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('/member-index-cs', 'indexCS');
-        Route::get('/member-select', 'selectMember');
+        Route::get('/member-select/{id}', 'selectMember');
         Route::post('/member-store', 'store');
         Route::get('/member-edit/{id}', 'edit');
         Route::post('/member-update/{id}', 'update');

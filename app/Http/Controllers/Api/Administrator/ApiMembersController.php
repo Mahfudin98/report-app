@@ -45,10 +45,9 @@ class ApiMembersController extends Controller
         return new MembersCollection($data);
     }
 
-    public function selectMember()
+    public function selectMember($id)
     {
-        $user = request()->user();
-        $member = Member::where('user_id', $user->id)->get();
+        $member = Member::where('user_id', $id)->get();
         return response()->json(['status' => 'success', 'data' => $member, 'message' => 'Data load successfully.'], 200);
     }
 
