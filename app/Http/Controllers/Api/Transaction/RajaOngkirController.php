@@ -41,6 +41,20 @@ class RajaOngkirController extends Controller
         ]);
     }
 
+    public function kabupaten()
+    {
+        $response = Http::withHeaders([
+            'key' => $this->API_KEY
+        ])->get('https://pro.rajaongkir.com/api/city');
+
+        $cities = $response['rajaongkir']['results'];
+
+        return response()->json([
+            'success' => true,
+            'data'    => $cities
+        ]);
+    }
+
     public function kecamatan($id)
     {
         $response = Http::withHeaders([
@@ -84,12 +98,13 @@ class RajaOngkirController extends Controller
         $data = [];
         foreach ($members as $row) {
             $data[] = [
-                'member_id'     => $row->id,
-                'nama_member'   => $row->member_name,
-                'phone_member'  => $row->member_phone,
-                'alamat_member' => $row->member_alamat,
-                'member_type'   => $row->member_type,
-                'member_status' => $row->member_status,
+                'member_id'      => $row->id,
+                'nama_member'    => $row->member_name,
+                'phone_member'   => $row->member_phone,
+                'member_city_id' => $row->city_id,
+                'alamat_member'  => $row->member_alamat,
+                'member_type'    => $row->member_type,
+                'member_status'  => $row->member_status,
             ];
         }
         return response()->json(['status' => 'success', 'data' => $data], 200);

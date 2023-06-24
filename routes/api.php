@@ -52,6 +52,7 @@ Route::controller(ChatController::class)->group(function () {
 Route::controller(RajaOngkirController::class)->group(function () {
     Route::get('/provinsi', 'provinsi')->name('provinsi');
     Route::get('/kota/{id}', 'kota')->name('kota');
+    Route::get('/kabupaten', 'kabupaten')->name('kabupaten');
     Route::get('/kecamatan/{id}', 'kecamatan')->name('kecamatan');
     Route::post('/cek-ongkir', 'cekOngkir')->name('cek-ongkir');
     Route::get('/member-list-guest', 'memberByProvince');
