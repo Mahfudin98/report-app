@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\Auth\ApiUsersController;
 use App\Http\Controllers\Api\Auth\TiktokKeyController;
 use App\Http\Controllers\Api\Dashboard\ActivityUserController;
 use App\Http\Controllers\Api\Dashboard\DashboardIndex;
+use App\Http\Controllers\Api\Dashboard\MarketPlaceDashboardController;
 use App\Http\Controllers\Api\Dashboard\ProfileDashboardController;
 use App\Http\Controllers\Api\Member\Auth\AuthMemberController;
 use App\Http\Controllers\Api\Member\DashboardMemberController;
@@ -29,6 +30,7 @@ use App\Http\Controllers\Api\Owner\TiktokPage\TiktiokProductController;
 use App\Http\Controllers\Api\Owner\TiktokPage\TiktiokPromotionController;
 use App\Http\Controllers\Api\Owner\TiktokPage\TiktiokReverseController;
 use App\Http\Controllers\Api\Owner\TiktokPage\TiktiokSupplychainController;
+use App\Http\Controllers\Api\Transaction\ApiMarketPlaceController;
 use App\Http\Controllers\Api\Transaction\ApiTransactionController;
 use App\Http\Controllers\Api\Transaction\RajaOngkirController;
 use Illuminate\Http\Request;
@@ -96,6 +98,25 @@ Route::controller(ApiTransactionController::class)->group(function () {
         Route::delete('/transaction-delete/{code}', 'delete');
         Route::get('/all-transaction', 'order');
         Route::post('/update-order/{code}', 'updateOrder');
+    });
+});
+
+Route::controller(ApiMarketPlaceController::class)->group(function () {
+    Route::middleware(['auth:sanctum'])->group(function () {
+        Route::get('/marketplace-list', 'index');
+        Route::post('/marketplace-store', 'store');
+        Route::post('/marketplace-update/{id}', 'update');
+        Route::post('/marketplace-store-order', 'storeOrder');
+        Route::delete('/marketplace-destroy-order/{code}', 'destroyOrder');
+    });
+});
+
+Route::controller(MarketPlaceDashboardController::class)->group(function () {
+    Route::middleware(['auth:sanctum'])->group(function () {
+        Route::get('/marketplace-order-index', 'index');
+        Route::get('/marketplace-order-line', 'lineOrder');
+        Route::get('/marketplace-order-bar', 'barOrder');
+        Route::get('/marketplace-order-donat', 'donatOrder');
     });
 });
 
