@@ -39,6 +39,74 @@ class MarketPlaceDashboardController extends Controller
 
     function lineOrder()
     {
+        $year = request()->year;
+        $month = request()->month;
+        $filter = $year . '-' . $month;
+        $parse = Carbon::parse($filter);
+        $array_date = range($parse->startOfMonth()->format('d'), $parse->endOfMonth()->format('d'));
+
+        $mpOrder = DB::table('market_places')
+            ->join('market_place_orders', 'market_places.id', '=', 'market_place_orders.market_place_id')
+            ->whereYear('market_place_orders.order_date', $year)
+            ->whereMonth('market_place_orders.order_date', $month)
+            ->select(
+                'market_places.id',
+                'market_places.market_place_name',
+                'market_place_orders.order_date',
+                'market_place_orders.order_product',
+                'market_place_orders.order_omset',
+            )
+            ->orderBy('market_place_orders.order_date')
+            ->get();
+
+        $groupedOrders = collect($mpOrder)->groupBy('market_place_name');
+
+        $result = [
+            'status' => 'success',
+            'data' => []
+        ];
+
+        foreach ($groupedOrders as $marketPlaceName => $orders) {
+            $groupedByDate = $orders->groupBy(function ($order) {
+                return Carbon::parse($order->order_date)->format('Y-m-d');
+            });
+
+            $data = [];
+            foreach ($array_date as $day) {
+                $date = $filter . '-' . str_pad($day, 2, '0', STR_PAD_LEFT);
+                $ordersByDate = $groupedByDate->get($date);
+
+                if ($ordersByDate) {
+                    $firstOrder = $ordersByDate->first();
+
+                    $data[] = [
+                        'order_date' => $date,
+                        'order_product' => $ordersByDate->sum('order_product'),
+                        'order_omset' => $ordersByDate->sum('order_omset'),
+                        'first_order' => [
+                            'id' => $firstOrder->id,
+                            'order_date' => $firstOrder->order_date,
+                            'order_product' => $firstOrder->order_product,
+                            'order_omset' => $firstOrder->order_omset,
+                        ],
+                    ];
+                } else {
+                    $data[] = [
+                        'order_date' => $date,
+                        'order_product' => 0,
+                        'order_omset' => 0,
+                        'first_order' => null,
+                    ];
+                }
+            }
+
+            $result['data'][] = [
+                'market_place_name' => $marketPlaceName,
+                'orders' => $data,
+            ];
+        }
+
+        return response()->json($result, 200);
     }
 
     function barOrder()
