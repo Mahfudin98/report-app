@@ -120,62 +120,26 @@ class MarketPlaceDashboardController extends Controller
         $mp = DB::table('market_places')
             ->leftJoin('market_place_orders', 'market_places.id', '=', 'market_place_orders.market_place_id')
             ->select(
-                DB::raw("(sum(market_place_orders.order_omset)) as total_omset"),
-                DB::raw("(sum(market_place_orders.order_product)) as total_product"),
-                DB::raw("(DATE_FORMAT(market_place_orders.order_date, '%m')) as month")
+                DB::raw("MONTH(market_place_orders.order_date) AS month, market_places.market_place_name, sum(*) AS order_count"),
             )
             ->where(DB::raw('YEAR(market_place_orders.order_date)'), '=', $year)
-            ->orderBy('market_place_orders.order_date')
-            ->groupBy(DB::raw("DATE_FORMAT(market_place_orders.order_date, '%m')"))
+            ->groupBy('month', 'market_place_orders.market_place_id')
+            ->orderBy('month', 'DESC')
             ->get();
-        $groupedOrders = collect($mp)->groupBy('market_place_name');
-
-        $result = [
-            'status' => 'success',
-            'data' => []
-        ];
-
-        foreach ($groupedOrders as $marketPlaceName => $orders) {
-            $groupedByDate = $orders->groupBy(function ($order) {
-                return Carbon::parse($order->order_date)->format('Y-m-d');
-            });
-
-            $data = [];
-            foreach ($month as $day) {
-                $date = $day . '-' . str_pad($day, 2, '0', STR_PAD_LEFT);
-                $ordersByDate = $groupedByDate->get($date);
-
-                if ($ordersByDate) {
-                    $firstOrder = $ordersByDate->first();
-
-                    $data[] = [
-                        'order_date' => $date,
-                        'order_product' => $ordersByDate->sum('order_product'),
-                        'order_omset' => $ordersByDate->sum('order_omset'),
-                        'first_order' => [
-                            'id' => $firstOrder->id,
-                            'order_date' => $firstOrder->order_date,
-                            'order_product' => $firstOrder->order_product,
-                            'order_omset' => $firstOrder->order_omset,
-                        ],
-                    ];
-                } else {
-                    $data[] = [
-                        'order_date' => $date,
-                        'order_product' => 0,
-                        'order_omset' => 0,
-                        'first_order' => null,
-                    ];
-                }
-            }
-
-            $result['data'][] = [
-                'market_place_name' => $marketPlaceName,
-                'orders' => $data,
+        $groupedOrders = collect($mp)->groupBy('month');
+        $data = [];
+        foreach ($month as $val) {
+            $date = $val;
+            $order = $mp->firstWhere('month', $date);
+            $data[] = [
+                'date' => $date,
+                'order' => $order ? $order->order_count : 0,
+                'market_place_name' => $order ? $order->market_place_name : null,
             ];
         }
 
-        return response()->json($result, 200);
+
+        return response()->json($data, 200);
     }
 
     function donatOrder()

@@ -134,6 +134,7 @@ Route::controller(ApiProductsController::class)->group(function () {
         // category
         Route::post('/product-category-store', 'storeCategory');
     });
+    Route::get('/product-category-customer', 'category');
     Route::get('/product-list-customer', 'listCustomer');
     Route::get('/product-list-formen-customer', 'formenProduct');
 });
