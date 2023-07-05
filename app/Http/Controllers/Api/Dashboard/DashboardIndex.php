@@ -186,7 +186,7 @@ class DashboardIndex extends Controller
                 'product_categories.category_type',
                 'product_categories.category_pay'
             )
-            ->where('product_categories.category_pay', 'paket komplit')
+            ->where('product_categories.category_pay', 'paket')
             ->groupBy('products.id')
             ->selectRaw('transaction_products.qty, sum(qty) as total')
             ->orderBy('total', 'DESC')
