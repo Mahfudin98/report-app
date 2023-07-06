@@ -104,9 +104,9 @@ Route::controller(ApiTransactionController::class)->group(function () {
 
 Route::controller(ImageHeadlineController::class)->group(function () {
     Route::middleware(['auth:sanctum'])->group(function () {
-        Route::get('/image-headline', 'index');
         Route::post('/image-headline-store', 'store');
     });
+    Route::get('/image-headline', 'index');
 });
 
 Route::controller(ApiMarketPlaceController::class)->group(function () {
