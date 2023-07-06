@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\Administrator\ApiDivisionsController;
 use App\Http\Controllers\Api\Administrator\ApiMembersController;
 use App\Http\Controllers\Api\Administrator\ApiProductsController;
 use App\Http\Controllers\Api\Administrator\ChatController;
+use App\Http\Controllers\Api\Administrator\ImageHeadlineController;
 use App\Http\Controllers\Api\Administrator\LogisticController;
 use App\Http\Controllers\Api\Auth\ApiLoginController;
 use App\Http\Controllers\Api\Auth\ApiUsersController;
@@ -98,6 +99,13 @@ Route::controller(ApiTransactionController::class)->group(function () {
         Route::delete('/transaction-delete/{code}', 'delete');
         Route::get('/all-transaction', 'order');
         Route::post('/update-order/{code}', 'updateOrder');
+    });
+});
+
+Route::controller(ImageHeadlineController::class)->group(function () {
+    Route::middleware(['auth:sanctum'])->group(function () {
+        Route::get('/image-headline', 'index');
+        Route::post('/image-headline-store', 'store');
     });
 });
 
