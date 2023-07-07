@@ -39,6 +39,7 @@ class ImageHeadlineController extends Controller
         $headlineImage = DB::table('headline_images')
             ->join('image_roation_schedules', 'headline_images.id', '=', 'image_roation_schedules.headline_image_id')
             ->select('headline_images.*', 'image_roation_schedules.start_date', 'image_roation_schedules.end_date')
+            ->latest()
             ->get();
         $data = [];
         foreach ($headlineImage as $value) {
