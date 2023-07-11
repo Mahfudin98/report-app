@@ -35,11 +35,18 @@ class ApiLoginController extends Controller
     {
         $user = request()->user();
         $login = DB::table('users')->join('user_details', 'users.id', '=', 'user_details.user_id')->join('divisions', 'users.division_id', '=', 'divisions.id')
-        ->select(
-            'users.email', 'users.username',
-            'user_details.nama_depan', 'user_details.nama_belakang', 'user_details.image', 'user_details.alamat', 'user_details.tanggal_lahir', 'user_details.phone',
-            'divisions.division_code',
-            'divisions.division_name'
+            ->select(
+                'users.id',
+                'users.email',
+                'users.username',
+                'user_details.nama_depan',
+                'user_details.nama_belakang',
+                'user_details.image',
+                'user_details.alamat',
+                'user_details.tanggal_lahir',
+                'user_details.phone',
+                'divisions.division_code',
+                'divisions.division_name'
             )->where('users.id', $user->id)->first();
         return response()->json(['status' => 'success', 'data' => $login, 'message' => 'User login successfully.'], 200);
     }
@@ -48,7 +55,7 @@ class ApiLoginController extends Controller
     {
         $user = request()->user();
         $image = UserDetail::where('user_id', $user->id)->first();
-        $path = Storage::disk('public')->url('user/'.$image->image);
+        $path = Storage::disk('public')->url('user/' . $image->image);
 
         if ($image->image == null) {
             return response()->json(['status' => 'failed', 'message' => 'User login failed.'], 404);

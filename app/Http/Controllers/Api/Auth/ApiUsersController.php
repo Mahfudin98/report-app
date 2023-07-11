@@ -63,6 +63,7 @@ class ApiUsersController extends Controller
             $adv = UserDetail::where('user_id', $user->parent_id)->first();
         }
         $data = [
+            'id_users' => $user->id,
             'adv' => $user->parent_id != null ? $adv->nama_depan . " " . $adv->nama_belakang : null,
             'username' => $user->username,
             'nama' => $user->nama_depan . " " . $user->nama_belakang,
