@@ -49,7 +49,9 @@ class Handler extends ExceptionHandler
                 return response()->json([
                     'status_code' => 401,
                     'success' => false,
-                    'message' => 'Unauthenticated.'
+                    'status' => 'Unauthenticated.',
+                    'token' => request()->bearerToken(),
+                    'message' => 'User belum login/Token expired.'
                 ], 401);
             }
         });

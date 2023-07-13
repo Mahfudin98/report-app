@@ -68,4 +68,70 @@ class ApiLoginController extends Controller
     {
         request()->user()->currentAccessToken()->delete();
     }
+
+    function absenLogin(Request $request)
+    {
+        $request->validate([
+            'username' => 'required',
+            'password' => 'required',
+        ]);
+        $user = User::where('username', $request->username)->where('status', true)->where('user_type', false)->first();
+        $login = DB::table('users')
+            ->join('user_details', 'users.id', '=', 'user_details.user_id')
+            ->join('divisions', 'users.division_id', '=', 'divisions.id')
+            ->select(
+                'users.id',
+                'users.username',
+                'user_details.nama_depan',
+                'user_details.nama_belakang',
+                'user_details.image',
+                'divisions.division_name'
+            )
+            ->where('users.username', $user->username)
+            ->where('users.status', true)->where('users.user_type', false)
+            ->first();
+        $path = Storage::disk('public')->url('user/' . $login->image);
+        $data = [
+            'user_id' => $login->id,
+            'username' => $login->username,
+            'nama_depan' => $login->nama_depan,
+            'nama_belakang' => $login->nama_belakang,
+            'image' => $path,
+            'division_name' => $login->division_name
+        ];
+        if (!$user || !Hash::check($request->password, $user->password)) {
+            return response()->json(
+                [
+                    'status' => 'success',
+                    'success' => false,
+                    'token' => null,
+                    'data' => null,
+                    'message' => 'User login failed.'
+                ],
+                401
+            );
+        }
+        $token = $user->createToken(time())->plainTextToken;
+        return response()->json(
+            [
+                'status' => 'success',
+                'success' => true,
+                'token' => $token,
+                'data' => $data,
+                'message' => 'User login successfully.'
+            ],
+            200
+        );
+    }
+
+    function absenLoginCheck()
+    {
+        return response()->json([
+            'status_code' => 200,
+            'success' => true,
+            'status' => 'Authenticated.',
+            'token' => request()->bearerToken(),
+            'message' => 'User sudah login.'
+        ], 200);
+    }
 }

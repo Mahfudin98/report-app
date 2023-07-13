@@ -64,7 +64,9 @@ Route::controller(RajaOngkirController::class)->group(function () {
 
 Route::controller(ApiLoginController::class)->group(function () {
     Route::post('login', 'login');
+    Route::post('login-absen', 'absenLogin');
     Route::middleware(['auth:sanctum'])->group(function () {
+        Route::get('/login-absen-check', 'absenLoginCheck');
         Route::get('/user-login', 'userLogin');
         Route::post('/logout', 'logout');
         Route::get('/user-image', 'userImage');
