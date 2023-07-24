@@ -467,4 +467,80 @@ class MembersDataController extends Controller
         }
         return response()->json(['status' => 'success', 'data' => array_sum($data)], 200);
     }
+
+    public function allPointMember()
+    {
+        $date = Carbon::now();
+        $from =  request()->from != '' ? request()->from : $date->firstOfMonth()->format('Y-m-d');
+        $to = request()->to != '' ? request()->to : $date->endOfMonth()->format('Y-m-d');
+        $member = Member::where('member_status', 1)->orderby('member_name', 'ASC')->get();
+        $data = [];
+        foreach ($member as $row) {
+            $tr = Transaction::where('member_id', $row->id)
+                ->groupBy('tanggal_transaksi')
+                ->groupBy('member_id');
+
+            $point = [];
+            foreach ($tr->whereBetween('tanggal_transaksi', [$from, $to])->get() as $value) {
+                $product = DB::table('transaction_products')
+                    ->join('products', 'transaction_products.product_id', '=', 'products.id')
+                    ->join('product_categories', 'products.category_id', '=', 'product_categories.id')
+                    ->where('transaction_products.transaction_id', $value->id)
+                    ->where('product_categories.category_pay', '!=', 'ecer')
+                    ->get();
+                $point[] = $product->sum('qty') >= 2 ? $product->sum('qty') : 0;
+            }
+            $image = $row->image != null && $row->image != 'null' ? Storage::disk('public')->url('member/' . $row->image) : null;
+            $latest = $tr->latest()->first();
+            $data[] = [
+                'member_name' => $row->member_name,
+                'member_type' => $row->member_type == 0 ? 'Reseller' : 'Agen',
+                'member_image' => $image,
+                'member_join' => $row->join_on,
+                'lates_order' => $latest ? $latest->tanggal_transaksi : null,
+                'point' => array_sum($point)
+            ];
+        }
+
+        return response()->json(['status' => 'success', 'data' => $data], 200);
+    }
+
+    public function allMemberTop()
+    {
+        $year = request()->year;
+        $month = request()->month;
+        $filter = $year . '-' . $month;
+        $member = DB::table('transactions')
+            ->join('transaction_products', 'transactions.id', '=', 'transaction_products.transaction_id')
+            ->rightJoin('members', 'transactions.member_id', '=', 'members.id')
+            ->where('transactions.tanggal_transaksi', 'LIKE', '%' . $filter . '%')
+            ->select(
+                'members.member_name',
+                'members.member_alamat',
+                'members.image',
+                'members.city_id',
+                'members.district_id',
+                'members.member_type',
+                'transactions.tanggal_transaksi',
+                'transaction_products.*'
+            )
+            ->groupBy('transactions.member_id')
+            ->selectRaw('transaction_products.*, sum(jumlah_harga) as total')
+            ->orderBy('total', 'DESC')
+            ->get();
+
+        $data = [];
+        foreach ($member as $row) {
+            $image = Storage::disk('public')->url('member/' . $row->image);
+            $data[] = [
+                'member_name' => $row->member_name,
+                'image' => $row->image != null ? $image : 'https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=334&q=80',
+                'member_type' => $row->member_type == 0 ? 'Reseller' : 'Agen',
+                'date' => $row->tanggal_transaksi,
+                'total' => $row->total
+            ];
+        }
+
+        return response()->json(['data' => $data], 200);
+    }
 }

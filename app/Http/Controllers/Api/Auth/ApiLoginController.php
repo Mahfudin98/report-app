@@ -25,7 +25,7 @@ class ApiLoginController extends Controller
         $user = User::where('username', $request->username)->where('status', true)->where('user_type', false)->first();
 
         if (!$user || !Hash::check($request->password, $user->password)) {
-            return response()->json(['status' => 'failed', 'message' => 'User login failed.'], 401);
+            return response()->json(['status' => 'failed', 'message' => 'User login failed.']);
         }
         $token = $user->createToken(time())->plainTextToken;
         return response()->json(['status' => 'success', 'data' => $token, 'message' => 'User login successfully.'], 200);

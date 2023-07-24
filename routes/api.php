@@ -242,6 +242,8 @@ Route::controller(MembersDataController::class)->group(function () {
         Route::get('/owner-member-detail/{id}', 'detailMember');
         Route::post('/owner-update-member/{username}', 'updateMember');
         Route::post('/owner-add-member-detail/{id}', 'storeMemberDetail');
+        Route::get('/owner-all-point-data-member', 'allPointMember');
+        Route::get('/owner-all-top-data-member', 'allMemberTop');
     });
 
     Route::get('/top-agen', 'memberTop');
