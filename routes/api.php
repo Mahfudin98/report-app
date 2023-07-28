@@ -126,6 +126,7 @@ Route::controller(ApiMarketPlaceController::class)->group(function () {
 Route::controller(MarketPlaceDashboardController::class)->group(function () {
     Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('/marketplace-order-index', 'index');
+        Route::get('/marketplace-order-all', 'allReport');
         Route::get('/marketplace-order-line', 'lineOrder');
         Route::get('/marketplace-order-bar', 'barOrder');
         Route::get('/marketplace-order-donat', 'donatOrder');
