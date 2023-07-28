@@ -41,13 +41,9 @@ class MarketPlaceDashboardController extends Controller
     {
         $start = Carbon::now()->startOfMonth()->format('Y-m-d');
         $end = Carbon::now()->endOfMonth()->format('Y-m-d');
-        $order = 'DESC';
-        if (request()->order_by != '') {
-            $order = request()->order_by;
-        }
         $mplist = DB::table('market_place_orders')
             ->join('market_places', 'market_place_orders.market_place_id', '=', 'market_places.id')
-            ->orderBy('market_place_orders.order_date', $order);
+            ->orderBy('market_place_orders.order_date', request()->order_by);
         if (request()->date != '') {
             $date = explode(' - ', request()->date);
             $start = Carbon::parse($date[0])->format('Y-m-d');
