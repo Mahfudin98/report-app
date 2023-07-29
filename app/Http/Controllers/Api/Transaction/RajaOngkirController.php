@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Member;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Storage;
 
 class RajaOngkirController extends Controller
 {
@@ -97,14 +98,16 @@ class RajaOngkirController extends Controller
         $members = Member::where('member_status', 1)->get();
         $data = [];
         foreach ($members as $row) {
+            $image = Storage::disk('public')->url('member/' . $row->image);
             $data[] = [
                 'member_id'      => $row->id,
                 'nama_member'    => $row->member_name,
                 'phone_member'   => $row->member_phone,
                 'member_city_id' => $row->city_id,
                 'alamat_member'  => $row->member_alamat,
-                'member_type'    => $row->member_type,
-                'member_status'  => $row->member_status,
+                'member_image'   => $row->image != null ? $image : null,
+                'member_type'    => $row->member_type == 0 ? 'Reseller' : 'Agen',
+                'member_status'  => "Aktif",
             ];
         }
         return response()->json(['status' => 'success', 'data' => $data], 200);
