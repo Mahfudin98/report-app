@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\Owner\Dashboard;
 
 use App\Http\Controllers\Controller;
 use App\Models\Member;
+use App\Models\MemberAdress;
 use App\Models\MemberDetail;
 use App\Models\ProductCategory;
 use App\Models\Transaction;
@@ -312,6 +313,35 @@ class MembersDataController extends Controller
                 'member_type' => $request->member_type != '' ? $request->member_type : $member->member_type,
                 'member_status' => $request->member_status != '' ? $request->member_status : $member->member_status,
             ]);
+            $province = Http::withHeaders([
+                'key' => $this->API_KEY
+            ])->get('https://pro.rajaongkir.com/api/province?id=' . $member->province_id)
+                ->json()['rajaongkir']['results']['province'];
+            $city = Http::withHeaders([
+                'key' => $this->API_KEY
+            ])->get('https://pro.rajaongkir.com/api/city?id=' . $member->city_id)
+                ->json()['rajaongkir']['results']['city_name'];
+            $district = Http::withHeaders([
+                'key' => $this->API_KEY
+            ])->get('https://pro.rajaongkir.com/api/subdistrict?id=' . $member->district_id)
+                ->json()['rajaongkir']['results']['subdistrict_name'];
+            $adress = MemberAdress::where('member_id', $member->id)->first();
+            if ($adress) {
+                $adress->update([
+                    'provinsi' => $province,
+                    'kota' => $city,
+                    'kecamatan' => $district,
+                ]);
+            } else {
+                $member_code = md5($member->member_name . $member->member_phone . $member->join_on);
+                MemberAdress::create([
+                    'member_id' => $member->id,
+                    'member_code' => $member_code,
+                    'provinsi' => $province,
+                    'kota' => $city,
+                    'kecamatan' => $district,
+                ]);
+            }
             DB::commit();
             return response()->json(['status' => 'success'], 200);
         } catch (\Exception $e) {
