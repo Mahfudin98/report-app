@@ -20,8 +20,21 @@ class ApiMembersController extends Controller
     protected $API_KEY = '12702fd83b0deca04b259899de0a9409';
     public function indexCS()
     {
-        $user = request()->user();
-        $members = Member::where('user_id', $user->id)->orderBy('created_at', 'DESC');
+        $members = DB::table('members')
+            ->leftJoin('user_details', 'members.user_id', '=', 'user_details.user_id')
+            ->leftJoin('member_adresses', 'members.id', '=', 'member_adresses.member_id')
+            ->select(
+                'members.*',
+                'member_adresses.member_code',
+                'member_adresses.provinsi',
+                'member_adresses.kota',
+                'member_adresses.kecamatan',
+                'user_details.nama_depan',
+                'user_details.image as image_cs',
+            )
+            ->groupBy('members.id')
+            ->orderBy('members.member_name', 'ASC');
+
         if (request()->q != '') {
             $members = $members->where(
                 'member_name',
@@ -31,26 +44,31 @@ class ApiMembersController extends Controller
         }
         $data = [];
         foreach ($members->get() as $row) {
-            $path = Storage::disk('public')->url('member/' . $row->image);
+            $imageCS = Storage::disk('public')->url('user/' . $row->image_cs);
+            $imageMember = $row->image != null && $row->image != 'null' ? Storage::disk('public')->url('member/' . $row->image) : null;
             $data[] = [
-                'id' => $row->id,
-                'nama' => $row->member_name,
-                'username' => $row->username,
-                'password' => $row->password,
-                'alamat' => $row->member_alamat,
-                'phone' => $row->member_phone,
-                'image' => $row->image != null ? $path : 'belum ada image',
-                'type' => $row->member_type == 0 ? 'Reseller' : 'Agen',
-                'status' => $row->member_status == 0 ? 'Tidak Aktif' : 'Aktif',
+                'cs_id'    => $row->user_id,
+                'cs_name'  => $row->nama_depan,
+                'cs_image' => $imageCS,
+                'member_id'        => $row->id,
+                'member_username'  => $row->username,
+                'member_code'      => $row->member_code,
+                'member_name'      => $row->member_name,
+                'member_image'     => $imageMember,
+                'member_provinsi'  => $row->provinsi,
+                'member_kota'      => $row->kota,
+                'member_kecamatan' => $row->kecamatan,
+                'member_type'      => $row->member_type,
+                'member_status'    => $row->member_status,
+                'member_phone'     => $row->member_phone,
             ];
         }
-
-        return new MembersCollection($data);
+        return response()->json(['status' => 'success', 'data' => $data], 200);
     }
 
     public function selectMember($id)
     {
-        $member = Member::where('user_id', $id)->get();
+        $member = Member::where('user_id', $id)->where('member_status', 1)->get();
         return response()->json(['status' => 'success', 'data' => $member, 'message' => 'Data load successfully.'], 200);
     }
 
@@ -93,6 +111,27 @@ class ApiMembersController extends Controller
                 'member_type'   => $request->member_type,
                 'member_status' => true,
             ]);
+            // address
+            $province = Http::withHeaders([
+                'key' => $this->API_KEY
+            ])->get('https://pro.rajaongkir.com/api/province?id=' . $member->province_id)
+                ->json()['rajaongkir']['results']['province'];
+            $city = Http::withHeaders([
+                'key' => $this->API_KEY
+            ])->get('https://pro.rajaongkir.com/api/city?id=' . $member->city_id)
+                ->json()['rajaongkir']['results']['city_name'];
+            $district = Http::withHeaders([
+                'key' => $this->API_KEY
+            ])->get('https://pro.rajaongkir.com/api/subdistrict?id=' . $member->district_id)
+                ->json()['rajaongkir']['results']['subdistrict_name'];
+            $member_code = md5($member->member_name . $member->member_phone . $member->join_on);
+            MemberAdress::create([
+                'member_id' => $member->id,
+                'member_code' => $member_code,
+                'provinsi' => $province,
+                'kota' => $city,
+                'kecamatan' => $district,
+            ]);
             DB::commit();
             UserActivityHelper::addToLog($request->member_type != 0 ? 'Add Member Agen ' . $request->member_name : 'Add Member Reseller ' . $request->member_name);
             return response()->json(['status' => 'success'], 200);
@@ -118,6 +157,7 @@ class ApiMembersController extends Controller
             'join_on'       => 'nullable',
             'image'         => 'nullable|image|mimes:png,jpeg,jpg|max:2048',
             'member_type'   => 'required',
+            'member_status' => 'required'
         ]);
         $filename = $member->image;
 
@@ -149,7 +189,7 @@ class ApiMembersController extends Controller
                 'join_on'       => $request->join_on,
                 'image'         => $filename,
                 'member_type'   => $request->member_type,
-                'member_status' => true,
+                'member_status' => $request->member_status,
             ]);
             $province = Http::withHeaders([
                 'key' => $this->API_KEY
