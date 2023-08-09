@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Member;
 use App\Models\MemberAdress;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use Mockery\Undefined;
@@ -97,16 +98,28 @@ class RajaOngkirController extends Controller
 
     public function memberByProvince()
     {
-        $members = Member::where('member_status', 1)->get();
+        $members = DB::table('members')
+            ->leftJoin('member_adresses', 'members.id', '=', 'member_adresses.member_id')
+            ->select(
+                'members.*',
+                'member_adresses.member_code',
+                'member_adresses.provinsi',
+                'member_adresses.kota',
+                'member_adresses.kecamatan',
+            )
+            ->where('members.member_status', 1)
+            ->groupBy('members.id')
+            ->orderBy('members.member_name', 'ASC')->get();
         $data = [];
         foreach ($members as $row) {
             $image = Storage::disk('public')->url('member/' . $row->image);
             $data[] = [
                 'member_id'      => $row->id,
-                'nama_member'    => $row->member_name,
-                'phone_member'   => $row->member_phone,
-                'member_city_id' => $row->city_id,
-                'alamat_member'  => $row->member_alamat,
+                'member_name'    => $row->member_name,
+                'member_phone'   => $row->member_phone,
+                'member_provinsi'   => $row->provinsi,
+                'member_kota'       => $row->kota,
+                'member_kecamatan'  => $row->kecamatan,
                 'member_image'   => $row->image != null ? $image : null,
                 'member_type'    => $row->member_type == 0 ? 'Reseller' : 'Agen',
                 'member_status'  => "Aktif",
