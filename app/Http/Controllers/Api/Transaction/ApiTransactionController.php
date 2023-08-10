@@ -40,7 +40,7 @@ class ApiTransactionController extends Controller
                 'customers.customer_alamat',
             )
             ->where('transactions.user_id', $user->id)
-            ->orderBy('transactions.tanggal_transaksi', 'Desc');
+            ->orderBy('transactions.tanggal_transaksi', 'DESC');
         if (request()->date != '') {
             $date = explode(' - ', request()->date);
             $start = Carbon::parse($date[0])->format('Y-m-d');
@@ -113,7 +113,7 @@ class ApiTransactionController extends Controller
             'nama_cs' => $detail->nama_depan . " " . $detail->nama_belakang,
             'email_cs' => $detail->email,
             'phone_cs' => $detail->phone,
-            'member' => $tr->member_id == null ? 'customer' : 'member',
+            'member' => $tr->member_id != null ? ($tr->member_type == 1 ? 'Agen' : 'Reseller') : 'Customer',
             'nama' => $tr->member_id == null ? $tr->customer_name : $tr->member_name,
             'alamat' => $tr->member_id == null ? $tr->customer_alamat : $tr->member_alamat,
             'phone' => $tr->member_id == null ? $tr->customer_phone : $tr->member_phone,
